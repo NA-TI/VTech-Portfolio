@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e91e63;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#9c27b0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="faceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffb3d1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff8ab4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle with magenta gradient -->
+  <circle cx="16" cy="16" r="15" fill="url(#bgGrad)" stroke="white" stroke-width="1"/>
+  
+  <!-- Face circle -->
+  <circle cx="16" cy="16" r="10" fill="url(#faceGrad)"/>
+  
+  <!-- Eyes -->
+  <circle cx="14" cy="14" r="1.2" fill="#2c1810"/> <!-- Left eye -->
+  <circle cx="18" cy="14" r="1.2" fill="#2c1810"/> <!-- Right eye -->
+  <circle cx="14.5" cy="13.5" r="0.4" fill="white"/> <!-- Left eye highlight -->
+  <circle cx="18.5" cy="13.5" r="0.4" fill="white"/> <!-- Right eye highlight -->
+  
+  <!-- Nose -->
+  <ellipse cx="16" cy="16" rx="0.8" ry="1.2" fill="#ff8ab4"/>
+  
+  <!-- Mouth -->
+  <path d="M 13 18 Q 16 19.5 19 18" stroke="#2c1810" stroke-width="1" fill="none" stroke-linecap="round"/>
+  
+  <!-- Hair/Beard representation -->
+  <path d="M 8 12 Q 16 8 24 12" stroke="#2c1810" stroke-width="2" fill="none" opacity="0.9"/>
+  <path d="M 12 20 Q 16 22 20 20" stroke="#2c1810" stroke-width="1.5" fill="none" opacity="0.7"/>
+  
+  <!-- Chain/Necklace representation -->
+  <ellipse cx="16" cy="24" rx="3" ry="1" fill="none" stroke="#c0c0c0" stroke-width="0.8" opacity="0.8"/>
+</svg> 
