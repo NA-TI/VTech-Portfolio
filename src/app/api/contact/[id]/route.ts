@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+// Use service role for admin actions (bypass RLS)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function PATCH(
   request: NextRequest,
@@ -19,7 +25,7 @@ export async function PATCH(
     }
 
     // Update the message status
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('contact_messages')
       .update({ status })
       .eq('id', id)
@@ -53,7 +59,7 @@ export async function DELETE(
     const { id } = await params;
 
     // Delete the message
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('contact_messages')
       .delete()
       .eq('id', id);

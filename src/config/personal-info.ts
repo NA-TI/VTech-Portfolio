@@ -2,9 +2,9 @@
 // Update this file with your information
 
 export const personalInfo = {
-  name: "Your Name",
-  title: "Creative Designer",
-  bio: "I bring ideas to life through innovative design and development. From pixel-perfect websites to stunning graphics and immersive 3D experiences, I create digital solutions that captivate and convert.",
+  name: "VTech",
+  title: "Software Company",
+  bio: "VTech is a technology company building reliable software products and services. We craft modern web and mobile applications, integrate cloud-native solutions, and deliver clean user experiences that help businesses move faster.",
   email: "hello@yourname.com",
   location: "Your Location",
   avatar: "/avatar.jpg",
@@ -17,9 +17,10 @@ export const personalInfo = {
     dribbble: "https://dribbble.com/yourname"
   },
   skills: [
+    "Software Development",
     "Web Development",
-    "Graphics Design", 
-    "3D Visualization",
+    "Mobile Development",
+    "Cloud & DevOps",
     "UI/UX Design"
   ]
 }; 

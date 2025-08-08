@@ -6,6 +6,20 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+async function ensureAvatarsBucketExists() {
+  // Try to fetch the bucket
+  const { data: bucket, error: bucketError } = await supabase.storage.getBucket('avatars');
+
+  if (!bucket || bucketError) {
+    // Create the bucket if it doesn't exist
+    await supabase.storage.createBucket('avatars', {
+      public: true,
+      fileSizeLimit: 5 * 1024 * 1024, // 5MB
+      allowedMimeTypes: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+    });
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -35,6 +49,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Ensure the storage bucket exists (idempotent)
+    await ensureAvatarsBucketExists();
 
     // Generate unique filename
     const timestamp = Date.now();

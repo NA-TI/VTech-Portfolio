@@ -10,7 +10,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, description, icon_name, color_gradient, proficiency, styled_words } = body;
+    const { title, description, icon_name, color_gradient, proficiency } = body;
     
     if (!title || !description || proficiency === undefined) {
       return NextResponse.json({ success: false, error: 'Title, description, and proficiency are required' }, { status: 400 });
@@ -18,7 +18,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     
     const { data, error } = await supabase
       .from('skills')
-      .update({ title, description, icon_name, color_gradient, proficiency, styled_words: styled_words || [] })
+      .update({ title, description, icon_name, color_gradient, proficiency })
       .eq('id', id)
       .select()
       .single();

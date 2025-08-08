@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabase as supabaseAnon } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+
+// Use service role for admin reads (bypass RLS)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET() {
   try {
     // Fetch all contact messages (for admin dashboard)
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('contact_messages')
       .select('*')
       .order('created_at', { ascending: false });
@@ -58,16 +65,14 @@ export async function POST(request: NextRequest) {
     });
 
     // Insert the contact message with status tracking
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAnon
       .from('contact_messages')
       .insert({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         message: message.trim(),
         status: 'pending'
-      })
-      .select()
-      .single();
+      });
 
     if (error) {
       console.error('Supabase error details:', {
@@ -93,12 +98,13 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    console.log('Successfully inserted:', data);
+    console.log('Successfully inserted contact message');
 
     return NextResponse.json({ 
       success: true, 
       message: 'Message sent successfully!',
-      data 
+      // Do not return the row, as SELECT is restricted by RLS
+      data: null 
     });
   } catch (error) {
     console.error('Contact API error:', error);

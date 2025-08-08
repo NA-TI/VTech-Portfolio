@@ -79,7 +79,9 @@ export default function ProfilePage() {
     try {
       const res = await fetch("/api/profile");
       const data = await res.json();
-      if (data.success && data.data) {
+      if (!data.success) {
+        setError(data.error || "Failed to fetch profile");
+      } else if (data.data) {
         setProfile(data.data);
         setForm({
           name: data.data.name || "",
@@ -100,8 +102,11 @@ export default function ProfilePage() {
           available_for_projects: data.data.available_for_projects ?? true,
         });
         setStyledWords(data.data.styled_words || []);
+        setError("");
       } else {
-        setError(data.error || "Failed to fetch profile");
+        // No profile yet – use defaults without error
+        setProfile(null);
+        setError("");
       }
     } catch (e) {
       setError("Failed to fetch profile");

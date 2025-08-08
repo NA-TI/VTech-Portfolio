@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
+// Use service role for admin reads/updates (bypass RLS)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 // Initialize Resend with error handling
 let resend: Resend;
@@ -59,7 +64,7 @@ export async function POST(request: NextRequest) {
     console.log('Fetching original message with ID:', messageId);
 
     // Get the original message to get sender's email
-    const { data: originalMessage, error: fetchError } = await supabase
+    const { data: originalMessage, error: fetchError } = await supabaseAdmin
       .from('contact_messages')
       .select('*')
       .eq('id', messageId)
@@ -138,7 +143,7 @@ export async function POST(request: NextRequest) {
     console.log('Email sent successfully:', emailResult.data?.id);
 
     // Update message status to replied
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('contact_messages')
       .update({ status: 'replied' })
       .eq('id', messageId);

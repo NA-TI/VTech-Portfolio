@@ -14,11 +14,12 @@ export async function GET() {
       .from('profiles')
       .select('*')
       .eq('id', ADMIN_ID)
-      .single();
+      .maybeSingle();
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ success: true, data });
+    // If profile not found yet, return success with null data
+    return NextResponse.json({ success: true, data: data ?? null });
   } catch (error) {
     return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }

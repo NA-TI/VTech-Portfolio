@@ -91,12 +91,12 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Projects Policies
 CREATE POLICY "Allow public read access" ON projects FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert" ON projects FOR INSERT USING (true);
+CREATE POLICY "Allow authenticated insert" ON projects FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow authenticated update" ON projects FOR UPDATE USING (true);
 
 -- Skills Policies
 CREATE POLICY "Allow public read access" ON skills FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert" ON skills FOR INSERT USING (true);
+CREATE POLICY "Allow authenticated insert" ON skills FOR INSERT WITH CHECK (true);
 CREATE POLICY "Allow authenticated update" ON skills FOR UPDATE USING (true);
 
 -- Contact Messages Policies
@@ -106,5 +106,5 @@ CREATE POLICY "Allow authenticated update" ON contact_messages FOR UPDATE USING 
 
 -- Profiles Policies
 CREATE POLICY "Allow public read access" ON profiles FOR SELECT USING (true);
-CREATE POLICY "Allow authenticated insert" ON profiles FOR INSERT WITH AUTH (true);
-CREATE POLICY "Allow authenticated update" ON profiles FOR UPDATE WITH AUTH (true);
+CREATE POLICY "Allow authenticated insert" ON profiles FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow authenticated update" ON profiles FOR UPDATE USING (true);

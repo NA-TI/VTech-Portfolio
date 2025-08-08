@@ -24,13 +24,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, description, icon_name, color_gradient, proficiency, styled_words } = body;
+    const { title, description, icon_name, color_gradient, proficiency } = body;
     if (!title || !description || proficiency === undefined) {
       return NextResponse.json({ success: false, error: 'Title, description, and proficiency are required' }, { status: 400 });
     }
     const { data, error } = await supabase
       .from('skills')
-      .insert([{ title, description, icon_name, color_gradient, proficiency, styled_words: styled_words || [], created_at: new Date().toISOString() }])
+      .insert([{ title, description, icon_name, color_gradient, proficiency, created_at: new Date().toISOString() }])
       .select()
       .single();
     if (error) {

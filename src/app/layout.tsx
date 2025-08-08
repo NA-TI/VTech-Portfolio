@@ -130,8 +130,7 @@ export default function RootLayout({
           `
         }} />
         
-        {/* Preload critical resources */}
-        <link rel="modulepreload" href="/_next/static/chunks/pages/index.js" />
+        {/* Avoid preloading internal Next.js chunks to prevent MIME warnings */}
         
         {/* Prevent FOUC (Flash of Unstyled Content) */}
         <script
