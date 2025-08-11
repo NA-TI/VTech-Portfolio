@@ -1,9 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateAdmin, createAdminToken } from '@/lib/auth';
+import { 
+  authenticateAdmin, 
+  createAdminToken, 
+  checkRateLimit, 
+  addActiveSession,
+  type LoginCredentials 
+} from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+    
+    // Rate limiting
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Too many login attempts. Please try again in 15 minutes.' 
+        },
+        { status: 429 }
+      );
+    }
+
+    const body: LoginCredentials = await request.json();
+    const { username, password, rememberMe = false } = body;
 
     // Validate input
     if (!username || !password) {
@@ -13,42 +33,57 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Authenticate credentials
-    if (!authenticateAdmin(username, password)) {
-      // Add small delay to prevent brute force attacks
-      await new Promise(resolve => setTimeout(resolve, 1000));
+    // Authenticate
+    const isValid = await authenticateAdmin(username, password);
+    
+    if (!isValid) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
         { status: 401 }
       );
     }
 
-    // Create JWT token
-    const token = await createAdminToken(username);
+    // Create token and session
+    const { token, sessionId } = await createAdminToken(
+      username, 
+      'admin@vtech.com', 
+      rememberMe
+    );
+    
+    // Track active session
+    addActiveSession(sessionId);
 
     // Create response with secure cookie
     const response = NextResponse.json({
       success: true,
-      message: 'Authentication successful',
-      user: { username, isAdmin: true }
+      message: 'Login successful',
+      user: {
+        username,
+        email: 'admin@vtech.com',
+        isAdmin: true
+      }
     });
 
     // Set secure HTTP-only cookie
-    response.cookies.set('admin_token', token, {
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60, // 24 hours
+      sameSite: 'strict' as const,
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 : 24 * 60 * 60, // 30 days or 24 hours
       path: '/'
-    });
+    };
+
+    response.cookies.set('admin_token', token, cookieOptions);
+    response.cookies.set('admin_session_id', sessionId, cookieOptions);
 
     return response;
 
   } catch (error) {
-    console.error('Login API error:', error);
+    console.error('Login error:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
-} 
+}
+

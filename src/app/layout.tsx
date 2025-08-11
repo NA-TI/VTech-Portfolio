@@ -1,5 +1,8 @@
+import React from "react";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -9,18 +12,18 @@ import ClientCustomCursor from "@/components/ClientCustomCursor";
 
 export const metadata: Metadata = {
   title: {
-    default: "NA-TI ናቲ - Creative Designer & Developer",
-    template: "%s | NA-TI ናቲ Portfolio"
+    default: "VTech Software Solutions - Custom Software Development",
+    template: "%s | VTech Solutions"
   },
-  description: "Creative designer and developer specializing in web development, graphics design, and 3D visualization. Creating digital solutions that captivate and convert.",
+  description: "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
   keywords: [
-    "portfolio", "creative designer", "web developer", "graphics design", "3D visualization",
-    "UI/UX designer", "frontend developer", "digital designer", "creative development",
-    "web design", "product design", "branding", "visual identity", "NA-TI", "ናቲ"
+    "software development", "custom software", "web development", "mobile app development", "cloud solutions",
+    "digital transformation", "enterprise software", "software company", "technology consulting",
+    "full-stack development", "DevOps", "AI integration", "VTech", "software solutions"
   ],
-  authors: [{ name: "NA-TI ናቲ", url: "https://nati.com" }],
-  creator: "NA-TI ናቲ",
-  publisher: "NA-TI ናቲ",
+  authors: [{ name: "VTech Software Solutions", url: "https://vtech-solutions.com" }],
+  creator: "VTech Software Solutions",
+  publisher: "VTech Software Solutions",
   formatDetection: {
     email: false,
     address: false,
@@ -33,25 +36,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://na-ti-portfolio.vercel.app',
-    title: 'NA-TI ናቲ - Creative Designer & Developer',
-    description: 'Creative designer and developer specializing in web development, graphics design, and 3D visualization. Creating digital solutions that captivate and convert.',
-    siteName: 'NA-TI ናቲ Portfolio',
+    url: 'https://vtech-solutions.vercel.app',
+    title: 'VTech Software Solutions - Custom Software Development',
+    description: 'VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.',
+    siteName: 'VTech Software Solutions',
     images: [
       {
         url: 'https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733',
         width: 1200,
         height: 792,
-        alt: 'NA-TI ናቲ - Creative Designer & Developer',
+        alt: 'VTech Software Solutions - Custom Software Development',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NA-TI ናቲ - Creative Designer & Developer',
-    description: 'Creative designer and developer specializing in web development, graphics design, and 3D visualization. Creating digital solutions that captivate and convert.',
+    title: 'VTech Software Solutions - Custom Software Development',
+    description: 'VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.',
     images: ['https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733'],
-    creator: '@nati',
+    creator: '@vtechsolutions',
   },
   robots: {
     index: true,
@@ -127,6 +130,10 @@ export default function RootLayout({
               from { opacity: 0; transform: translateY(20px); }
               to { opacity: 1; transform: translateY(0); }
             }
+            /* Fix for font-size warnings */
+            * {
+              font-size: inherit;
+            }
           `
         }} />
         
@@ -149,7 +156,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-sans antialiased" suppressHydrationWarning>
+      <body className={`font-sans ${inter.variable} antialiased`} suppressHydrationWarning>
         {/* Skip to content link for accessibility */}
         <a 
           href="#main-content" 

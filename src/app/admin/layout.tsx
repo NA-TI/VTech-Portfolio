@@ -1,54 +1,11 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import GhostLoader from '@/components/GhostLoader';
-const AdminSidebar = dynamic(() => import('@/components/AdminSidebar'), { ssr: false });
+import { Toaster } from 'react-hot-toast';
+import AdminSidebar from '@/components/AdminSidebar';
 
 // Icons
-const DashboardIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7"/>
-    <rect x="14" y="3" width="7" height="7"/>
-    <rect x="14" y="14" width="7" height="7"/>
-    <rect x="3" y="14" width="7" height="7"/>
-  </svg>
-);
-
-const ProjectsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-  </svg>
-);
-
-const SkillsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-  </svg>
-);
-
-const ProfileIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);
-
-const MessagesIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  </svg>
-);
-
-const LogoutIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-    <polyline points="16,17 21,12 16,7"/>
-    <line x1="21" y1="12" x2="9" y2="12"/>
-  </svg>
-);
-
 const MenuIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="3" y1="6" x2="21" y2="6"/>
@@ -57,173 +14,239 @@ const MenuIcon = () => (
   </svg>
 );
 
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"/>
+    <path d="M21 21l-4.35-4.35"/>
+  </svg>
+);
+
+const BellIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+);
+
+const UserIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Check if we're on the login page
-  const isLoginPage = pathname === '/admin/login';
-
-  // Proper authentication check
+  // Check authentication
   useEffect(() => {
-    if (isLoginPage) {
-      setIsLoading(false);
-      return;
-    }
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/verify', {
+          credentials: 'include'
+        });
 
-    // Check localStorage for admin session
-    const hasSession = localStorage.getItem('admin_session') === 'authenticated';
-    if (hasSession) {
-      setIsAuthenticated(true);
-    } else {
-      // Redirect to login page
-      router.replace('/admin/login');
-    }
-    setIsLoading(false);
-  }, [isLoginPage, router]);
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        } else {
+          // Redirect to login if not on login page
+          if (pathname !== '/admin/login') {
+            router.push('/admin/login');
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        if (pathname !== '/admin/login') {
+          router.push('/admin/login');
+          return;
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const handleLogout = async () => {
-    try {
-      // Call logout API to clear server-side session
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (error) {
-      console.error('Logout API error:', error);
-    }
+    checkAuth();
+  }, [pathname, router]);
 
-    // Clear client-side data
-    localStorage.removeItem('admin_session');
-    setIsAuthenticated(false);
-    router.replace('/admin/login');
-  };
-
-  const navigation = [
-    { name: 'Dashboard', href: '/admin', icon: DashboardIcon },
-    { name: 'Projects', href: '/admin/projects', icon: ProjectsIcon },
-    { name: 'Skills', href: '/admin/skills', icon: SkillsIcon },
-    { name: 'Profile', href: '/admin/profile', icon: ProfileIcon },
-    { name: 'Messages', href: '/admin/messages', icon: MessagesIcon },
-  ];
-
-  // If we're on the login page, just render the children
-  if (isLoginPage) {
-    return <>{children}</>;
+  // If we're on the login page, just render children
+  if (pathname === '/admin/login') {
+    return (
+      <>
+        <Toaster 
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: '#374151',
+              color: '#fff',
+            },
+          }}
+        />
+        {children}
+      </>
+    );
   }
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <GhostLoader size="lg" variant="glow" className="mb-4" />
-          <p className="text-gray-600 dark:text-gray-400 font-medium">
-            Loading admin panel...
-          </p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated && !isLoginPage) {
-    return null; // Will redirect to login
+  // If not authenticated, don't render anything (redirect will happen)
+  if (!user) {
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#374151',
+            color: '#fff',
+          },
+        }}
+      />
+
+      {/* Sidebar */}
       <AdminSidebar
         collapsed={sidebarCollapsed}
-        onCollapse={() => setSidebarCollapsed((v) => !v)}
+        onCollapse={() => setSidebarCollapsed(prev => !prev)}
         mobileOpen={sidebarOpen}
         onMobileClose={() => setSidebarOpen(false)}
-        onLogout={handleLogout}
       />
-      {/* Main content wrapper */}
-      <div className={`flex-1 min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'} ml-0 flex flex-col`}> 
-        {/* Top bar */}
-        <header className="sticky top-0 z-30 bg-gradient-to-r from-gray-900/90 to-blue-900/80 shadow-lg border-b border-gray-800 flex items-center min-h-[64px] py-2 px-4 md:px-6 lg:px-8 gap-4">
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-gray-800/60 transition text-gray-300"
-            aria-label="Open sidebar menu"
-          >
-            <MenuIcon />
-          </button>
-          
-          {/* Enhanced Search */}
-          <div className="flex-1 flex items-center">
-            <div className="relative w-full max-w-md">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
-              <input
-                type="text"
-                placeholder="Search projects, skills, messages..."
-                className="w-full rounded-lg bg-gray-800/80 text-gray-100 placeholder-gray-400 pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-gray-800/90 transition-all duration-200"
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <span className="text-xs text-gray-500 bg-gray-700/60 rounded px-2 py-1">Ctrl+K</span>
-              </div>
-            </div>
-          </div>
-          
-          {/* Enhanced Notifications */}
-          <div className="flex items-center space-x-2">
-            <button className="relative p-2 rounded-full hover:bg-gray-800/60 transition group">
-              <svg className="w-6 h-6 text-gray-300 group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-              </svg>
-              <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-gray-900 animate-pulse"></span>
-              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                3
-              </span>
-            </button>
+
+      {/* Main Content */}
+      <div className={`flex-1 min-h-screen transition-all duration-300 ${
+        sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
+      } ml-0 flex flex-col`}>
+        
+        {/* Top Navigation Bar */}
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
             
-            {/* Quick Actions Menu */}
-            <div className="relative">
-              <button className="p-2 rounded-lg hover:bg-gray-800/60 transition text-gray-300 group">
-                <svg className="w-6 h-6 group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
+            {/* Left Section */}
+            <div className="flex items-center space-x-4">
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Open sidebar"
+              >
+                <MenuIcon />
               </button>
-            </div>
-          </div>
-          
-          {/* Enhanced User Avatar/Menu */}
-          <div className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:shadow-xl transition-all duration-300">
-                A
+
+              {/* Search Bar */}
+              <div className="hidden sm:block relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <SearchIcon />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-64 bg-gray-100 dark:bg-gray-800 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
             </div>
-            <div className="hidden md:flex flex-col text-right">
-              <span className="text-sm text-white font-medium">Admin</span>
-              <span className="text-xs text-gray-400">Superuser</span>
+
+            {/* Right Section */}
+            <div className="flex items-center space-x-4">
+              {/* Notifications */}
+              <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <BellIcon />
+                <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                  3
+                </span>
+              </button>
+
+              {/* User Profile */}
+              <div className="flex items-center space-x-3">
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    {user?.username || 'Admin'}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Administrator
+                  </p>
+                </div>
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                    {user?.username?.[0]?.toUpperCase() || 'A'}
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+                </div>
+              </div>
             </div>
-            <svg className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
           </div>
-        </header>
-        {/* Main content */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden">
-          <div className="max-w-full">
-            {children}
-          </div>
+        </motion.header>
+
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-x-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="p-4 sm:p-6 lg:p-8"
+          >
+            <div className="max-w-full">
+              {children}
+            </div>
+          </motion.div>
         </main>
+
+        {/* Footer */}
+        <footer className="border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm">
+          <div className="px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                © 2024 VTech Portfolio. All rights reserved.
+              </p>
+              <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                <span>Version 2.0</span>
+                <span>•</span>
+                <span>Last updated: {new Date().toLocaleDateString()}</span>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
-} 
+}
+

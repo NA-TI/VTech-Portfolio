@@ -2,58 +2,63 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import GhostLoader from '@/components/GhostLoader';
+import { toast } from 'react-hot-toast';
 
 // Enhanced Icons
-const ProjectsIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-  </svg>
-);
-
-const SkillsIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-  </svg>
-);
-
-const MessagesIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-  </svg>
-);
-
-const ViewsIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-    <circle cx="12" cy="12" r="3"/>
-  </svg>
-);
-
-const TrendingUpIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const TrendingUpIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
     <polyline points="16,7 22,7 22,13"/>
   </svg>
 );
 
-const TrendingDownIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <polyline points="22,17 13.5,8.5 8.5,13.5 2,7"/>
-    <polyline points="16,17 22,17 22,11"/>
+const ProjectsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+    <line x1="8" y1="21" x2="16" y2="21"/>
+    <line x1="12" y1="17" x2="12" y2="21"/>
   </svg>
 );
 
-const ClockIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+const SkillsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </svg>
+);
+
+const MessagesIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+);
+
+const ViewsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+  </svg>
+);
+
+const ArrowRightIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M5 12h14"/>
+    <path d="m12 5 7 7-7 7"/>
+  </svg>
+);
+
+const CalendarIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+);
+
+const ClockIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10"/>
     <polyline points="12,6 12,12 16,14"/>
-  </svg>
-);
-
-const ActivityIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
   </svg>
 );
 
@@ -61,18 +66,20 @@ interface DashboardStats {
   projects: number;
   skills: number;
   messages: number;
-  pendingMessages: number;
   views: number;
-  lastUpdated: string;
-  recentActivity: Array<{
-    id: string;
-    type: 'project' | 'message' | 'skill' | 'view';
-    title: string;
-    time: string;
-    status: 'success' | 'warning' | 'info';
-  }>;
   weeklyViews: number[];
   monthlyGrowth: number;
+  recentActivity: ActivityItem[];
+}
+
+interface ActivityItem {
+  id: string;
+  type: 'project' | 'message' | 'skill' | 'view';
+  title: string;
+  description: string;
+  timestamp: string;
+  icon: React.ComponentType;
+  color: string;
 }
 
 export default function AdminDashboard() {
@@ -80,81 +87,81 @@ export default function AdminDashboard() {
     projects: 0,
     skills: 0,
     messages: 0,
-    pendingMessages: 0,
     views: 0,
-    lastUpdated: new Date().toLocaleString(),
-    recentActivity: [],
     weeklyViews: [120, 190, 300, 500, 200, 300, 450],
-    monthlyGrowth: 0
+    monthlyGrowth: 15.3,
+    recentActivity: []
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'7d' | '30d' | '90d'>('7d');
 
   useEffect(() => {
-    fetchDashboardStats();
-    // Set up real-time updates every 30 seconds
-    const interval = setInterval(fetchDashboardStats, 30000);
-    return () => clearInterval(interval);
+    fetchDashboardData();
   }, []);
 
-  const fetchDashboardStats = async () => {
+  const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Fetch all data in parallel
+      // Fetch data from multiple endpoints
       const [projectsRes, skillsRes, messagesRes] = await Promise.all([
-        fetch('/api/projects'),
-        fetch('/api/skills'),
-        fetch('/api/contact')
+        fetch('/api/projects', { credentials: 'include' }),
+        fetch('/api/skills', { credentials: 'include' }),
+        fetch('/api/contact', { credentials: 'include' })
       ]);
 
-      // Helper to safely parse JSON or throw error
-      const getJsonOrThrow = async (res: Response, label: string) => {
+      const getJsonSafely = async (res: Response, label: string) => {
         if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`${label} fetch failed: ${res.status} - ${text}`);
+          console.warn(`${label} fetch failed: ${res.status}`);
+          return { data: [] };
         }
         return res.json();
       };
 
-      const projects = await getJsonOrThrow(projectsRes, 'Projects');
-      const skills = await getJsonOrThrow(skillsRes, 'Skills');
-      const messages = await getJsonOrThrow(messagesRes, 'Messages');
+      const [projects, skills, messages] = await Promise.all([
+        getJsonSafely(projectsRes, 'Projects'),
+        getJsonSafely(skillsRes, 'Skills'),
+        getJsonSafely(messagesRes, 'Messages')
+      ]);
 
-      // Calculate pending messages
-      const pendingMessages = messages.data?.filter((msg: any) => msg.status === 'pending').length || 0;
-
-      // Generate mock recent activity
-      const recentActivity = [
+      // Generate recent activity
+      const recentActivity: ActivityItem[] = [
         {
           id: '1',
-          type: 'message' as const,
-          title: 'New contact message from John Doe',
-          time: '2 minutes ago',
-          status: 'warning' as const
+          type: 'message',
+          title: 'New Contact Message',
+          description: 'Someone inquired about web development services',
+          timestamp: '2 hours ago',
+          icon: MessagesIcon,
+          color: 'text-blue-500'
         },
         {
           id: '2',
-          type: 'project' as const,
-          title: 'Updated "E-commerce Platform" project',
-          time: '1 hour ago',
-          status: 'success' as const
+          type: 'project',
+          title: 'Project Updated',
+          description: 'E-commerce Website project was modified',
+          timestamp: '4 hours ago',
+          icon: ProjectsIcon,
+          color: 'text-green-500'
         },
         {
           id: '3',
-          type: 'view' as const,
-          title: 'Portfolio viewed from LinkedIn',
-          time: '3 hours ago',
-          status: 'info' as const
+          type: 'view',
+          title: 'High Traffic Day',
+          description: 'Portfolio received 150+ views today',
+          timestamp: '6 hours ago',
+          icon: ViewsIcon,
+          color: 'text-purple-500'
         },
         {
           id: '4',
-          type: 'skill' as const,
-          title: 'Added new skill: "React Native"',
-          time: '1 day ago',
-          status: 'success' as const
+          type: 'skill',
+          title: 'Skill Added',
+          description: 'Added new React.js skill to portfolio',
+          timestamp: '1 day ago',
+          icon: SkillsIcon,
+          color: 'text-orange-500'
         }
       ];
 
@@ -162,28 +169,16 @@ export default function AdminDashboard() {
         projects: projects.data?.length || 0,
         skills: skills.data?.length || 0,
         messages: messages.data?.length || 0,
-        pendingMessages,
         views: Math.floor(Math.random() * 1000) + 500,
-        lastUpdated: new Date().toLocaleString(),
-        recentActivity,
         weeklyViews: [120, 190, 300, 500, 200, 300, 450],
-        monthlyGrowth: 15.3
+        monthlyGrowth: 15.3,
+        recentActivity
       });
+
     } catch (error) {
-      console.error('Error fetching dashboard stats:', error);
+      console.error('Error fetching dashboard data:', error);
       setError('Failed to load dashboard data');
-      // Fallback to mock data
-      setStats({
-        projects: 3,
-        skills: 3,
-        messages: 0,
-        pendingMessages: 0,
-        views: 847,
-        lastUpdated: new Date().toLocaleString(),
-        recentActivity: [],
-        weeklyViews: [120, 190, 300, 500, 200, 300, 450],
-        monthlyGrowth: 15.3
-      });
+      toast.error('Failed to load dashboard data');
     } finally {
       setIsLoading(false);
     }
@@ -194,197 +189,134 @@ export default function AdminDashboard() {
       title: 'Total Projects',
       value: stats.projects,
       icon: ProjectsIcon,
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-      textColor: 'text-blue-600 dark:text-blue-400',
+      color: 'from-blue-500 to-cyan-500',
       href: '/admin/projects',
-      trend: stats.projects > 0 ? '+12%' : '0%',
-      trendDirection: 'up' as const,
-      description: 'Portfolio projects'
+      trend: '+12%',
+      description: 'Active portfolio projects'
     },
     {
       title: 'Skills & Services',
       value: stats.skills,
       icon: SkillsIcon,
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-      textColor: 'text-purple-600 dark:text-purple-400',
+      color: 'from-purple-500 to-pink-500',
       href: '/admin/skills',
-      trend: stats.skills > 0 ? '+8%' : '0%',
-      trendDirection: 'up' as const,
-      description: 'Professional skills'
+      trend: '+8%',
+      description: 'Technical competencies'
     },
     {
-      title: 'Contact Messages',
+      title: 'Messages',
       value: stats.messages,
       icon: MessagesIcon,
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-900/20',
-      textColor: 'text-green-600 dark:text-green-400',
+      color: 'from-green-500 to-emerald-500',
       href: '/admin/messages',
-      trend: stats.pendingMessages > 0 ? `${stats.pendingMessages} pending` : 'All caught up',
-      trendDirection: stats.pendingMessages > 0 ? 'up' as const : 'neutral' as const,
-      description: 'Incoming inquiries'
+      trend: 'New',
+      description: 'Contact inquiries'
     },
     {
       title: 'Portfolio Views',
       value: stats.views,
       icon: ViewsIcon,
-      color: 'from-orange-500 to-orange-600',
-      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-      textColor: 'text-orange-600 dark:text-orange-400',
+      color: 'from-orange-500 to-red-500',
       href: '#',
       trend: `+${stats.monthlyGrowth}%`,
-      trendDirection: 'up' as const,
-      description: 'This month'
+      description: 'Monthly visitors'
     }
   ];
 
   const quickActions = [
     {
       title: 'Add New Project',
-      description: 'Create a new portfolio project',
+      description: 'Showcase your latest work',
       href: '/admin/projects/new',
       color: 'from-blue-500 to-purple-500',
-      icon: ProjectsIcon,
-      badge: 'New'
+      icon: ProjectsIcon
     },
     {
       title: 'Update Profile',
-      description: 'Edit your personal information',
+      description: 'Edit personal information',
       href: '/admin/profile',
       color: 'from-green-500 to-blue-500',
       icon: SkillsIcon
     },
     {
       title: 'View Messages',
-      description: `Check ${stats.pendingMessages} pending messages`,
+      description: 'Check recent inquiries',
       href: '/admin/messages',
       color: 'from-purple-500 to-pink-500',
-      icon: MessagesIcon,
-      badge: stats.pendingMessages > 0 ? `${stats.pendingMessages}` : undefined
+      icon: MessagesIcon
     },
     {
-      title: 'Manage Skills',
-      description: 'Update your skills and services',
-      href: '/admin/skills',
+      title: 'Upload Media',
+      description: 'Manage images and files',
+      href: '/admin/media',
       color: 'from-orange-500 to-red-500',
-      icon: SkillsIcon
+      icon: ViewsIcon
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'success': return 'text-green-600 bg-green-100 dark:bg-green-900/20';
-      case 'warning': return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/20';
-      case 'info': return 'text-blue-600 bg-blue-100 dark:bg-blue-900/20';
-      default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20';
-    }
-  };
-
-  const getActivityIcon = (type: string) => {
-    switch (type) {
-      case 'project': return <ProjectsIcon className="w-4 h-4" />;
-      case 'message': return <MessagesIcon className="w-4 h-4" />;
-      case 'skill': return <SkillsIcon className="w-4 h-4" />;
-      case 'view': return <ViewsIcon className="w-4 h-4" />;
-      default: return <ActivityIcon className="w-4 h-4" />;
-    }
-  };
-
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <GhostLoader size="xl" variant="glow" className="mb-4" />
-          <p className="text-gray-600 dark:text-gray-400 font-medium">
-            Loading dashboard...
-          </p>
+      <div className="space-y-6">
+        {/* Header Skeleton */}
+        <div className="mb-8">
+          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-64 mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-96"></div>
+        </div>
+
+        {/* Stats Cards Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-6 animate-pulse">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-4"></div>
+              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="space-y-6 px-0 max-w-full">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
-          >
-            Dashboard
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-gray-600 dark:text-gray-400 mt-2"
-          >
-            Welcome back! Here's what's happening with your portfolio.
-          </motion.p>
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <div className="text-red-500 mb-4">
+          <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
         </div>
-        
-        {/* Timeframe Selector */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex items-center space-x-2 mt-4 lg:mt-0"
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          Failed to load dashboard
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
+        <button
+          onClick={fetchDashboardData}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
         >
-          <span className="text-sm text-gray-600 dark:text-gray-400">Timeframe:</span>
-          <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-            {[
-              { key: '7d', label: '7 Days' },
-              { key: '30d', label: '30 Days' },
-              { key: '90d', label: '90 Days' }
-            ].map((timeframe) => (
-              <button
-                key={timeframe.key}
-                onClick={() => setSelectedTimeframe(timeframe.key as any)}
-                className={`px-2 md:px-3 py-1 text-xs md:text-sm rounded-md transition-all ${
-                  selectedTimeframe === timeframe.key
-                    ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-                }`}
-              >
-                {timeframe.label}
-              </button>
-            ))}
-          </div>
-        </motion.div>
+          Try Again
+        </button>
       </div>
+    );
+  }
 
-      {error && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-col items-center justify-center bg-red-50 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-xl p-6"
-        >
-          <div className="flex items-center space-x-3">
-            <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0z" />
-            </svg>
-            <span className="text-lg font-semibold text-red-700 dark:text-red-300">
-              Oops! Something went wrong.
-            </span>
-          </div>
-          <p className="mt-2 text-red-600 dark:text-red-200">
-            We couldn't load your dashboard data. Please try again.
-          </p>
-          <button
-            onClick={fetchDashboardStats}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </motion.div>
-      )}
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-8"
+      >
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Dashboard Overview
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Welcome back! Here's what's happening with your portfolio.
+        </p>
+      </motion.div>
 
-      {/* Enhanced Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((card, index) => {
           const Icon = card.icon;
           return (
@@ -393,51 +325,44 @@ export default function AdminDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -5, scale: 1.02 }}
+              whileHover={{ y: -4, scale: 1.02 }}
               className="group"
             >
               <Link href={card.href}>
-                <div className={`p-4 md:p-6 rounded-xl border border-gray-200 dark:border-gray-700 ${card.bgColor} hover:shadow-xl transition-all duration-300 relative overflow-hidden`}>
-                  {/* Gradient overlay on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  {/* Background gradient */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
                   
-                  <div className="relative">
+                  <div className="relative z-10">
+                    {/* Header */}
                     <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
                           {card.title}
                         </p>
-                        <p className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mt-1">
-                          {card.value}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {card.description}
+                        <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                          {card.value.toLocaleString()}
                         </p>
                       </div>
-                      <div className={`p-2 md:p-3 rounded-xl bg-gradient-to-r ${card.color} shadow-lg`}>
-                        <Icon className="text-white w-5 h-5 md:w-6 md:h-6" />
+                      <div className={`p-3 rounded-lg bg-gradient-to-br ${card.color} shadow-lg`}>
+                        <Icon />
                       </div>
                     </div>
-                    
-                    {/* Enhanced trend indicator */}
+
+                    {/* Description */}
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                      {card.description}
+                    </p>
+
+                    {/* Trend */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        {card.trendDirection === 'up' ? (
-                          <TrendingUpIcon className="w-3 h-3 md:w-4 md:h-4 text-green-500 mr-1" />
-                        ) : card.trendDirection === 'neutral' ? (
-                          <TrendingDownIcon className="w-3 h-3 md:w-4 md:h-4 text-red-500 mr-1" />
-                        ) : null}
-                        <span className={`text-xs md:text-sm font-medium ${
-                          card.trendDirection === 'up' 
-                            ? 'text-green-600 dark:text-green-400'
-                            : card.trendDirection === 'neutral'
-                            ? 'text-red-600 dark:text-red-400'
-                            : 'text-gray-600 dark:text-gray-400'
-                        }`}>
+                      <div className="flex items-center space-x-1">
+                        <TrendingUpIcon />
+                        <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                           {card.trend}
                         </span>
                       </div>
-                      <ClockIcon className="w-3 h-3 md:w-4 md:h-4 text-gray-400" />
+                      <ArrowRightIcon />
                     </div>
                   </div>
                 </div>
@@ -447,154 +372,172 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Quick Actions */}
-        <div className="lg:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <span className="w-1 h-6 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full mr-3"></span>
-              Quick Actions
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Analytics Chart */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Weekly Traffic
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {quickActions.map((action, index) => {
-                const Icon = action.icon;
-                return (
-                  <motion.div
-                    key={action.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + index * 0.1 }}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Link href={action.href}>
-                      <div className="p-6 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300 relative overflow-hidden group">
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        
-                        <div className="relative flex items-start space-x-4">
-                          <div className={`w-12 h-12 bg-gradient-to-r ${action.color} rounded-xl flex items-center justify-center shadow-lg`}>
-                            <Icon className="text-white" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between">
-                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                                {action.title}
-                              </h3>
-                              {action.badge && (
-                                <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300 rounded-full">
-                                  {action.badge}
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                              {action.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+            <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+              <CalendarIcon />
+              <span>Last 7 days</span>
             </div>
-          </motion.div>
-        </div>
+          </div>
+
+          {/* Chart */}
+          <div className="relative">
+            <div className="flex items-end justify-between h-32 space-x-2 mb-4">
+              {stats.weeklyViews.map((value, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ height: 0 }}
+                  animate={{ height: `${(value / Math.max(...stats.weeklyViews)) * 100}%` }}
+                  transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }}
+                  className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t min-h-[4px] relative group cursor-pointer"
+                >
+                  {/* Tooltip */}
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900 text-white text-xs px-2 py-1 rounded">
+                    {value}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* Days */}
+            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                <span key={day}>{day}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div className="text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Total</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                {stats.weeklyViews.reduce((a, b) => a + b, 0)}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Average</p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                {Math.round(stats.weeklyViews.reduce((a, b) => a + b, 0) / 7)}
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Growth</p>
+              <p className="text-lg font-semibold text-green-600 dark:text-green-400">
+                +{stats.monthlyGrowth}%
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
         {/* Recent Activity */}
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-              <span className="w-1 h-6 bg-gradient-to-b from-green-500 to-blue-500 rounded-full mr-3"></span>
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
               Recent Activity
             </h2>
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-              <div className="space-y-4">
-                {stats.recentActivity.map((activity, index) => (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
-                    className="flex items-start space-x-3"
-                  >
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${getStatusColor(activity.status)}`}>
-                      {getActivityIcon(activity.type)}
+            <Link
+              href="/admin/activity"
+              className="text-sm text-blue-500 hover:text-blue-600 font-medium"
+            >
+              View all
+            </Link>
+          </div>
+
+          <div className="space-y-4">
+            {stats.recentActivity.map((activity, index) => {
+              const Icon = activity.icon;
+              return (
+                <motion.div
+                  key={activity.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                  className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700 ${activity.color}`}>
+                    <Icon />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {activity.title}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {activity.description}
+                    </p>
+                    <div className="flex items-center mt-1 text-xs text-gray-400">
+                      <ClockIcon />
+                      <span className="ml-1">{activity.timestamp}</span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                        {activity.title}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {activity.time}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                <Link href="/admin/messages" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                  View all activity →
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
       </div>
 
-      {/* Analytics Chart Placeholder */}
+      {/* Quick Actions */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
-        className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6"
+        className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700"
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-            <span className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full mr-3"></span>
-            Portfolio Views
-          </h2>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">Last 7 days</span>
-          </div>
-        </div>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
+          Quick Actions
+        </h2>
         
-        {/* Simple bar chart */}
-        <div className="flex items-end justify-between h-32 space-x-2">
-          {stats.weeklyViews.map((value, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center">
-              <div 
-                className="w-full bg-gradient-to-t from-blue-500 to-purple-500 rounded-t"
-                style={{ height: `${(value / Math.max(...stats.weeklyViews)) * 100}%` }}
-              />
-              <span className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}
-              </span>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickActions.map((action, index) => {
+            const Icon = action.icon;
+            return (
+              <motion.div
+                key={action.title}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.8 + index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -2 }}
+                className="group"
+              >
+                <Link href={action.href}>
+                  <div className="relative p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 overflow-hidden">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                    
+                    <div className="relative z-10 text-center">
+                      <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${action.color} text-white mb-3 shadow-lg`}>
+                        <Icon />
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                        {action.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {action.description}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          })}
         </div>
-      </motion.div>
-
-      {/* Last Updated */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="text-center"
-      >
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Last updated: {stats.lastUpdated}
-        </p>
       </motion.div>
     </div>
   );
-} 
+}
+

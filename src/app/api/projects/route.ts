@@ -35,14 +35,11 @@ export async function POST(request: NextRequest) {
     // Require authentication for creating projects
     const session = await requireAuth(request);
     if (!session) {
-      console.error('Authentication failed: No valid session');
       return NextResponse.json(
         { success: false, error: 'Authentication required' },
         { status: 401 }
       );
     }
-
-    console.log('Authentication successful for user:', session.username);
 
     const body = await request.json();
     const { 

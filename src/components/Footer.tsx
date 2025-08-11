@@ -1,9 +1,8 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import SelectiveTextStyling from './SelectiveTextStyling';
 
-const GitHubIcon = ({ size = 24, className = "" }) => (
+const GitHubIcon = ({ size = 20, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -16,7 +15,7 @@ const GitHubIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
-const LinkedInIcon = ({ size = 24, className = "" }) => (
+const LinkedInIcon = ({ size = 20, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -29,185 +28,211 @@ const LinkedInIcon = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+const TwitterIcon = ({ size = 20, className = "" }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
 
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-black dark:to-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
-          {/* Brand Section */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                NA-TI
+        <div className="py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            {/* Company Section */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center mb-6">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-slate-800 to-cyan-500 flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-sm">V</span>
+                </div>
+                <span className="text-xl font-semibold text-gray-900 dark:text-white">
+                  VTech Solutions
+                </span>
+              </div>
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 max-w-md">
+                Building scalable software solutions that drive business growth. 
+                From web applications to cloud infrastructure, we deliver technology that works.
+              </p>
+              <div className="flex space-x-4">
+                <a
+                  href="https://github.com/vtech-solutions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="GitHub"
+                >
+                  <GitHubIcon />
+                </a>
+                <a
+                  href="https://linkedin.com/company/vtech-solutions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <LinkedInIcon />
+                </a>
+                <a
+                  href="https://twitter.com/vtechsolutions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="Twitter"
+                >
+                  <TwitterIcon />
+                </a>
+              </div>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                Product
               </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/services"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/portfolio"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Portfolio
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/pricing"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/case-studies"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Case Studies
+                  </Link>
+                </li>
+              </ul>
             </div>
-            <SelectiveTextStyling
-              text="Crafting exceptional digital experiences through innovative design and cutting-edge development. Let's bring your vision to life."
-              styledWords={[
-                { word: 'exceptional', style: 'bold' },
-                { word: 'innovative', style: 'bold-color', color: 'purple' },
-                { word: 'cutting-edge', style: 'italic' },
-                { word: 'vision', style: 'bold-color', color: 'blue' }
-              ]}
-              className="text-gray-600 dark:text-gray-300 leading-relaxed"
-            />
-            <div className="flex space-x-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:scale-110"
-              >
-                <GitHubIcon size={20} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:scale-110"
-              >
-                <LinkedInIcon size={20} />
-              </a>
+
+            {/* Company */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                Company
+              </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/about"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    About
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/careers"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Careers
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/blog"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/contact"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Contact
+                  </Link>
+                </li>
+              </ul>
             </div>
-          </div>
 
-          {/* Navigation */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              Navigation
-            </h3>
-            <ul className="space-y-4">
-              <li>
-                <Link
-                  href="/"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-blue-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-blue-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/projects"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-blue-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Projects
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/fun"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-blue-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Fun
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 flex items-center group"
-                >
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-blue-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Contact
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              Services
-            </h3>
-            <ul className="space-y-4">
-              <li>
-                <span className="text-gray-600 dark:text-gray-300 flex items-center group">
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-purple-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Web Development
-                </span>
-              </li>
-              <li>
-                <span className="text-gray-600 dark:text-gray-300 flex items-center group">
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-purple-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  UI/UX Design
-                </span>
-              </li>
-              <li>
-                <span className="text-gray-600 dark:text-gray-300 flex items-center group">
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-purple-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  Mobile Apps
-                </span>
-              </li>
-              <li>
-                <span className="text-gray-600 dark:text-gray-300 flex items-center group">
-                  <span className="w-2 h-2 bg-gray-300 group-hover:bg-purple-600 rounded-full mr-3 transition-colors duration-300"></span>
-                  3D Graphics
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact Info */}
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-              Get In Touch
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    Available for new projects and collaborations
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-green-600 rounded-full mt-2 flex-shrink-0"></div>
-                <div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">
-                    Remote & Worldwide
-                  </p>
-                </div>
-              </div>
-              <div className="pt-4">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  Start a Project
-                </Link>
-              </div>
+            {/* Resources */}
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+                Resources
+              </h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link
+                    href="/docs"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Documentation
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/support"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Support
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms"
+                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="pt-8 border-t border-gray-200 dark:border-gray-700">
+        <div className="py-6 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} NA-TI Portfolio. All rights reserved.
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              &copy; {new Date().getFullYear()} VTech Software Solutions. All rights reserved.
             </p>
-            <div className="flex items-center space-x-6 text-sm">
-              <span className="text-gray-500 dark:text-gray-400">
-                Built with <span className="text-red-500">&hearts;</span> and Next.js
+            <div className="flex items-center space-x-6">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Built with Next.js
               </span>
-              <span className="text-gray-300 dark:text-gray-600">|</span>
-              <span className="text-gray-500 dark:text-gray-400">
-                Deployed on Vercel
+              <span className="text-gray-300 dark:text-gray-600">•</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Hosted on Vercel
               </span>
             </div>
           </div>

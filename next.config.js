@@ -29,14 +29,15 @@ const nextConfig = {
   // Disable experimental features that might cause issues
   experimental: {
     optimizePackageImports: [],
-    turbo: {
-      rules: {
-        '*.svg': {
-          loaders: ['@svgr/webpack'],
-          as: '*.js',
-        },
-      },
-    },
+    // Disable turbo temporarily to fix chunk loading issues
+    // turbo: {
+    //   rules: {
+    //     '*.svg': {
+    //       loaders: ['@svgr/webpack'],
+    //       as: '*.js',
+    //     },
+    //   },
+    // },
   },
   
   // Modern JavaScript target
@@ -82,7 +83,7 @@ const nextConfig = {
   
 
   
-  // Security headers
+  // Security headers - relaxed for development
   async headers() {
     return [
       {
@@ -90,23 +91,45 @@ const nextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'SAMEORIGIN'
           },
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on'
           },
           {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains'
-          },
-          {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin'
+          }
+        ]
+      },
+      // Allow proper MIME types for Next.js static files
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      },
+      // Ensure proper MIME types for JavaScript files
+      {
+        source: '/_next/static/chunks/(.*).js',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/javascript; charset=utf-8'
+          }
+        ]
+      },
+      // Ensure proper MIME types for CSS files
+      {
+        source: '/_next/static/(.*).css',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'text/css; charset=utf-8'
           }
         ]
       }
@@ -114,4 +137,5 @@ const nextConfig = {
   }
 };
 
+module.exports = nextConfig; 
 module.exports = nextConfig; 
