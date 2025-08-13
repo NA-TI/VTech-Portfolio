@@ -1,27 +1,37 @@
 import React from "react";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { Inter } from "next/font/google";
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClientCustomCursor from "@/components/ClientCustomCursor";
 
-
-
 export const metadata: Metadata = {
   title: {
     default: "VTech Software Solutions - Custom Software Development",
-    template: "%s | VTech Solutions"
+    template: "%s | VTech Solutions",
   },
-  description: "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
+  description:
+    "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
   keywords: [
-    "software development", "custom software", "web development", "mobile app development", "cloud solutions",
-    "digital transformation", "enterprise software", "software company", "technology consulting",
-    "full-stack development", "DevOps", "AI integration", "VTech", "software solutions"
+    "software development",
+    "custom software",
+    "web development",
+    "mobile app development",
+    "cloud solutions",
+    "digital transformation",
+    "enterprise software",
+    "software company",
+    "technology consulting",
+    "full-stack development",
+    "DevOps",
+    "AI integration",
+    "VTech",
+    "software solutions",
   ],
-  authors: [{ name: "VTech Software Solutions", url: "https://vtech-solutions.com" }],
+  authors: [
+    { name: "VTech Software Solutions", url: "https://vtech-solutions.com" },
+  ],
   creator: "VTech Software Solutions",
   publisher: "VTech Software Solutions",
   formatDetection: {
@@ -29,32 +39,38 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://na-ti-portfolio.vercel.app'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://na-ti-portfolio.vercel.app"
+  ),
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://vtech-solutions.vercel.app',
-    title: 'VTech Software Solutions - Custom Software Development',
-    description: 'VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.',
-    siteName: 'VTech Software Solutions',
+    type: "website",
+    locale: "en_US",
+    url: "https://vtech-solutions.vercel.app",
+    title: "VTech Software Solutions - Custom Software Development",
+    description:
+      "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
+    siteName: "VTech Software Solutions",
     images: [
       {
-        url: 'https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733',
+        url: "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
         width: 1200,
         height: 792,
-        alt: 'VTech Software Solutions - Custom Software Development',
+        alt: "VTech Software Solutions - Custom Software Development",
       },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'VTech Software Solutions - Custom Software Development',
-    description: 'VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.',
-    images: ['https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733'],
-    creator: '@vtechsolutions',
+    card: "summary_large_image",
+    title: "VTech Software Solutions - Custom Software Development",
+    description:
+      "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
+    images: [
+      "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
+    ],
+    creator: "@vtechsolutions",
   },
   robots: {
     index: true,
@@ -62,9 +78,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {
@@ -78,7 +94,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" }
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -95,18 +111,23 @@ export default function RootLayout({
         <link rel="icon" href="/favicon-profile.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        
+
         {/* Performance optimizations */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link rel="dns-prefetch" href="//images.unsplash.com" />
         <link rel="dns-prefetch" href="//ihwtmbszdcyxqiurifco.supabase.co" />
         <link rel="preload" href="/manifest.json" as="application/manifest" />
         <link rel="preload" href="/og-image.jpg" as="image" />
-        
+
         {/* Critical CSS inlining */}
-        <style dangerouslySetInnerHTML={{
-          __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
             /* Critical CSS for above-the-fold content */
             .hero-card { 
               background: rgba(255, 255, 255, 0.8); 
@@ -134,11 +155,12 @@ export default function RootLayout({
             * {
               font-size: inherit;
             }
-          `
-        }} />
-        
+          `,
+          }}
+        />
+
         {/* Avoid preloading internal Next.js chunks to prevent MIME warnings */}
-        
+
         {/* Prevent FOUC (Flash of Unstyled Content) */}
         <script
           dangerouslySetInnerHTML={{
@@ -156,18 +178,21 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`font-sans ${inter.variable} antialiased`} suppressHydrationWarning>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         {/* Skip to content link for accessibility */}
-        <a 
-          href="#main-content" 
+        <a
+          href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Skip to main content
         </a>
-        
+
         {/* Loading indicator */}
-        <div id="loading-indicator" className="fixed top-0 left-0 right-0 z-50 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 transform scale-x-0 origin-left transition-transform duration-300 ease-out"></div>
-        
+        <div
+          id="loading-indicator"
+          className="fixed top-0 left-0 right-0 z-50 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 transform scale-x-0 origin-left transition-transform duration-300 ease-out"
+        ></div>
+
         <ErrorBoundary>
           <ClientCustomCursor />
           <Navigation />
@@ -176,11 +201,14 @@ export default function RootLayout({
           </main>
           <Footer />
         </ErrorBoundary>
-        
+
         {/* Analytics placeholder */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`} />
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+            />
             <script
               dangerouslySetInnerHTML={{
                 __html: `
@@ -193,7 +221,7 @@ export default function RootLayout({
             />
           </>
         )}
-        
+
         {/* Performance monitoring */}
         <script
           dangerouslySetInnerHTML={{

@@ -1,9 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAuth } from '@/lib/auth';
-import { createClient } from '@supabase/supabase-js';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { requireAuth } from "@/lib/auth";
 
-// Force dynamic rendering for this route
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // Initialize Supabase client with admin credentials for content management
 const supabaseAdmin = createClient(
@@ -38,7 +37,7 @@ interface SiteContent {
       buttonText: string;
     };
   };
-  
+
   // Company Information
   company: {
     name: string;
@@ -50,7 +49,7 @@ interface SiteContent {
     logo: string;
     available: boolean;
   };
-  
+
   // Navigation
   navigation: {
     brand: string;
@@ -60,7 +59,7 @@ interface SiteContent {
       icon?: string;
     }>;
   };
-  
+
   // Footer
   footer: {
     description: string;
@@ -78,7 +77,7 @@ interface SiteContent {
       icon: string;
     }>;
   };
-  
+
   // About Page
   about: {
     hero: {
@@ -92,7 +91,7 @@ interface SiteContent {
       image?: string;
     }>;
   };
-  
+
   // Services Page
   services: {
     hero: {
@@ -106,7 +105,7 @@ interface SiteContent {
       buttonText: string;
     };
   };
-  
+
   // Contact Page
   contact: {
     hero: {
@@ -119,8 +118,8 @@ interface SiteContent {
       description: string;
     };
   };
-  
-  // SEO & Meta
+
+  // SEO
   seo: {
     defaultTitle: string;
     defaultDescription: string;
@@ -135,27 +134,30 @@ const defaultContent: SiteContent = {
     hero: {
       title: "Build Software Solutions That Scale",
       subtitle: "Software Development • Cloud Solutions • Digital Innovation",
-      description: "VTech is a technology company building reliable software products and services. We craft modern web and mobile applications, integrate cloud-native solutions, and deliver clean user experiences that help businesses move faster.",
+      description:
+        "VTech is a technology company building reliable software products and services. We craft modern web and mobile applications, integrate cloud-native solutions, and deliver clean user experiences that help businesses move faster.",
       primaryButton: "Start Your Project",
-      secondaryButton: "View Our Work"
+      secondaryButton: "View Our Work",
     },
     services: {
       title: "What We Build",
       subtitle: "Comprehensive Development Services",
-      description: "From concept to deployment, we handle every aspect of your software development needs.",
-      ctaText: "See All Services"
+      description:
+        "From concept to deployment, we handle every aspect of your software development needs.",
+      ctaText: "See All Services",
     },
     testimonials: {
       title: "Trusted by Startups",
-      subtitle: "What Our Clients Say"
+      subtitle: "What Our Clients Say",
     },
     cta: {
       title: "Ready to Build Your Next Project?",
-      description: "Let's discuss how we can help bring your ideas to life with custom software solutions.",
-      buttonText: "Get Started Today"
-    }
+      description:
+        "Let's discuss how we can help bring your ideas to life with custom software solutions.",
+      buttonText: "Get Started Today",
+    },
   },
-  
+
   company: {
     name: "VTech Software Solutions",
     tagline: "Building Tomorrow's Software Today",
@@ -164,9 +166,9 @@ const defaultContent: SiteContent = {
     phone: "+1 (555) 123-4567",
     address: "Addis Ababa, Ethiopia",
     logo: "/window.svg",
-    available: true
+    available: true,
   },
-  
+
   navigation: {
     brand: "VTech",
     items: [
@@ -174,12 +176,13 @@ const defaultContent: SiteContent = {
       { label: "About", href: "/about", icon: "user" },
       { label: "Services", href: "/services", icon: "briefcase" },
       { label: "Projects", href: "/projects", icon: "folder" },
-      { label: "Contact", href: "/contact", icon: "mail" }
-    ]
+      { label: "Contact", href: "/contact", icon: "mail" },
+    ],
   },
-  
+
   footer: {
-    description: "Building scalable software solutions that drive business growth. From web applications to cloud infrastructure, we deliver technology that works.",
+    description:
+      "Building scalable software solutions that drive business growth. From web applications to cloud infrastructure, we deliver technology that works.",
     copyright: "VTech Software Solutions. All rights reserved.",
     columns: [
       {
@@ -188,8 +191,8 @@ const defaultContent: SiteContent = {
           { label: "Services", href: "/services" },
           { label: "Portfolio", href: "/portfolio" },
           { label: "Pricing", href: "/pricing" },
-          { label: "Case Studies", href: "/case-studies" }
-        ]
+          { label: "Case Studies", href: "/case-studies" },
+        ],
       },
       {
         title: "Company",
@@ -197,8 +200,8 @@ const defaultContent: SiteContent = {
           { label: "About", href: "/about" },
           { label: "Careers", href: "/careers" },
           { label: "Blog", href: "/blog" },
-          { label: "Contact", href: "/contact" }
-        ]
+          { label: "Contact", href: "/contact" },
+        ],
       },
       {
         title: "Resources",
@@ -206,110 +209,151 @@ const defaultContent: SiteContent = {
           { label: "Documentation", href: "/docs" },
           { label: "Support", href: "/support" },
           { label: "Privacy Policy", href: "/privacy" },
-          { label: "Terms of Service", href: "/terms" }
-        ]
-      }
+          { label: "Terms of Service", href: "/terms" },
+        ],
+      },
     ],
     social: [
-      { platform: "GitHub", url: "https://github.com/vtech-solutions", icon: "github" },
-      { platform: "LinkedIn", url: "https://linkedin.com/company/vtech-solutions", icon: "linkedin" },
-      { platform: "Twitter", url: "https://twitter.com/vtechsolutions", icon: "twitter" }
-    ]
+      {
+        platform: "GitHub",
+        url: "https://github.com/vtech-solutions",
+        icon: "github",
+      },
+      {
+        platform: "LinkedIn",
+        url: "https://linkedin.com/company/vtech-solutions",
+        icon: "linkedin",
+      },
+      {
+        platform: "Twitter",
+        url: "https://twitter.com/vtechsolutions",
+        icon: "twitter",
+      },
+    ],
   },
-  
+
   about: {
     hero: {
       title: "We Build Software That Actually Works",
       subtitle: "Our Story",
-      description: "Founded with a mission to create reliable, scalable software solutions that help businesses thrive in the digital age."
+      description:
+        "Founded with a mission to create reliable, scalable software solutions that help businesses thrive in the digital age.",
     },
     sections: [
       {
         title: "Our Mission",
-        content: "To deliver high-quality software solutions that solve real business problems and drive growth for our clients."
+        content:
+          "To deliver high-quality software solutions that solve real business problems and drive growth for our clients.",
       },
       {
         title: "Our Approach",
-        content: "We combine cutting-edge technology with proven methodologies to create software that's both innovative and reliable."
-      }
-    ]
+        content:
+          "We combine cutting-edge technology with proven methodologies to create software that's both innovative and reliable.",
+      },
+    ],
   },
-  
+
   services: {
     hero: {
       title: "Software Development Services",
       subtitle: "What We Offer",
-      description: "Comprehensive development services from concept to deployment."
+      description:
+        "Comprehensive development services from concept to deployment.",
     },
     cta: {
       title: "Ready to Start Your Project?",
-      description: "Let's discuss how we can help build your next software solution.",
-      buttonText: "Get In Touch"
-    }
+      description:
+        "Let's discuss how we can help build your next software solution.",
+      buttonText: "Get In Touch",
+    },
   },
-  
+
   contact: {
     hero: {
       title: "Let's Build Something Great Together",
       subtitle: "Get In Touch",
-      description: "Ready to start your project? We'd love to hear about your ideas and discuss how we can help bring them to life."
+      description:
+        "Ready to start your project? We'd love to hear about your ideas and discuss how we can help bring them to life.",
     },
     info: {
       title: "Get In Touch",
-      description: "Ready to start your project? We'd love to hear from you."
-    }
+      description: "Ready to start your project? We'd love to hear from you.",
+    },
   },
-  
+
   seo: {
-    defaultTitle: "VTech Software Solutions - Professional Software Development",
-    defaultDescription: "VTech builds reliable software products and services. Custom web applications, mobile apps, cloud solutions, and digital innovation.",
-    keywords: ["software development", "web development", "mobile apps", "cloud solutions", "custom software"],
-    ogImage: "/og-image.jpg"
-  }
+    defaultTitle:
+      "VTech Software Solutions - Professional Software Development",
+    defaultDescription:
+      "VTech builds reliable software products and services. Custom web applications, mobile apps, cloud solutions, and digital innovation.",
+    keywords: [
+      "software development",
+      "web development",
+      "mobile apps",
+      "cloud solutions",
+      "custom software",
+    ],
+    ogImage: "/og-image.jpg",
+  },
 };
 
 export async function GET(request: NextRequest) {
   try {
     // Allow public access for content (but require auth for admin panel)
-    const isAdminRequest = request.headers.get('X-Admin-Request') === 'true';
-    
+    const isAdminRequest = request.headers.get("X-Admin-Request") === "true";
+
     if (isAdminRequest) {
       const auth = await requireAuth(request);
       if (!auth) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       }
     }
 
     // Fetch content from database
     const { data: siteContent, error } = await supabaseAdmin
-      .from('site_content')
-      .select('content_data')
-      .eq('content_key', 'main')
-      .eq('is_published', true)
+      .from("site_content")
+      .select("content_data, version, updated_at")
+      .eq("content_key", "main")
+      .eq("is_published", true)
       .single();
 
     if (error) {
-      console.error('Database fetch error:', error);
+      console.error("Database fetch error:", error);
       // Fall back to default content if database fails
       return NextResponse.json({
         success: true,
         data: defaultContent,
-        source: 'fallback'
+        source: "fallback",
+        error: error.message,
       });
     }
 
+    if (!siteContent || !siteContent.content_data) {
+      console.log("No content found in database, using default");
+      return NextResponse.json({
+        success: true,
+        data: defaultContent,
+        source: "fallback",
+        reason: "no_content_in_db",
+      });
+    }
+
+    console.log("Content loaded from database successfully");
     return NextResponse.json({
       success: true,
       data: siteContent.content_data,
-      source: 'database'
+      source: "database",
+      version: siteContent.version,
+      updated_at: siteContent.updated_at,
     });
   } catch (error) {
-    console.error('Content fetch error:', error);
+    console.error("Content fetch error:", error);
     // Fall back to default content on any error
     return NextResponse.json({
       success: true,
       data: defaultContent,
-      source: 'fallback'
+      source: "fallback",
+      error: error instanceof Error ? error.message : "Unknown error",
     });
   }
 }
@@ -318,53 +362,110 @@ export async function PUT(request: NextRequest) {
   try {
     const auth = await requireAuth(request);
     if (!auth) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    
+
     // Validate the content structure
-    if (!body || typeof body !== 'object') {
-      return NextResponse.json({ error: 'Invalid content data' }, { status: 400 });
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        { error: "Invalid content data" },
+        { status: 400 }
+      );
     }
 
     // Sanitize and validate content
     const sanitizedContent = sanitizeContent(body);
-    
-    // Update content in database
-    const { data, error } = await supabaseAdmin
-      .from('site_content')
-      .update({
-        content_data: sanitizedContent,
-        updated_at: new Date().toISOString(),
-        updated_by: auth.username || null,
-        version: 1 // For now, we'll increment this manually later
-      })
-      .eq('content_key', 'main')
-      .select()
+
+    // Check if content already exists
+    const { data: existingContent } = await supabaseAdmin
+      .from("site_content")
+      .select("id, version")
+      .eq("content_key", "main")
       .single();
 
-    if (error) {
-      console.error('Database update error:', error);
-      return NextResponse.json({ 
-        error: 'Failed to update content in database',
-        details: error.message 
-      }, { status: 500 });
-    }
+    if (existingContent) {
+      // Update existing content
+      const { data, error } = await supabaseAdmin
+        .from("site_content")
+        .update({
+          content_data: sanitizedContent,
+          updated_at: new Date().toISOString(),
+          updated_by: auth.username || null,
+          version: existingContent.version + 1,
+        })
+        .eq("content_key", "main")
+        .select("content_data, version, updated_at")
+        .single();
 
-    console.log('Content updated successfully in database');
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Content updated successfully',
-      data: data.content_data
-    });
+      if (error) {
+        console.error("Database update error:", error);
+        return NextResponse.json(
+          {
+            error: "Failed to update content in database",
+            details: error.message,
+          },
+          { status: 500 }
+        );
+      }
+
+      console.log(
+        "Content updated successfully in database, version:",
+        data.version
+      );
+
+      return NextResponse.json({
+        success: true,
+        message: "Content updated successfully",
+        data: data.content_data,
+        version: data.version,
+        updated_at: data.updated_at,
+      });
+    } else {
+      // Insert new content
+      const { data, error } = await supabaseAdmin
+        .from("site_content")
+        .insert({
+          content_key: "main",
+          content_data: sanitizedContent,
+          is_published: true,
+          version: 1,
+          updated_by: auth.username || null,
+        })
+        .select("content_data, version, updated_at")
+        .single();
+
+      if (error) {
+        console.error("Database insert error:", error);
+        return NextResponse.json(
+          {
+            error: "Failed to create content in database",
+            details: error.message,
+          },
+          { status: 500 }
+        );
+      }
+
+      console.log("Content created successfully in database");
+
+      return NextResponse.json({
+        success: true,
+        message: "Content created successfully",
+        data: data.content_data,
+        version: data.version,
+        updated_at: data.updated_at,
+      });
+    }
   } catch (error) {
-    console.error('Content update error:', error);
-    return NextResponse.json({ 
-      error: 'Failed to update content',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    console.error("Content update error:", error);
+    return NextResponse.json(
+      {
+        error: "Failed to update content",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -373,21 +474,40 @@ function sanitizeContent(content: any): SiteContent {
   // Basic validation and sanitization
   // In a production app, you'd want more robust validation
   try {
-    // Ensure all required sections exist
-    const sanitized = {
-      homepage: content.homepage || defaultContent.homepage,
-      company: content.company || defaultContent.company,
-      navigation: content.navigation || defaultContent.navigation,
-      footer: content.footer || defaultContent.footer,
-      about: content.about || defaultContent.about,
-      services: content.services || defaultContent.services,
-      contact: content.contact || defaultContent.contact,
-      seo: content.seo || defaultContent.seo
-    };
+    // Deep merge with default content to ensure all required fields exist
+    const sanitized = deepMerge(defaultContent, content);
+
+    // Basic type checking
+    if (typeof sanitized.homepage?.hero?.title !== "string") {
+      throw new Error("Invalid homepage hero title");
+    }
+
+    if (typeof sanitized.company?.name !== "string") {
+      throw new Error("Invalid company name");
+    }
 
     return sanitized;
   } catch (error) {
-    console.error('Content sanitization error:', error);
+    console.error("Content sanitization error:", error);
     return defaultContent;
   }
+}
+
+// Deep merge utility function
+function deepMerge(target: any, source: any): any {
+  const result = { ...target };
+
+  for (const key in source) {
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key])
+    ) {
+      result[key] = deepMerge(target[key] || {}, source[key]);
+    } else {
+      result[key] = source[key];
+    }
+  }
+
+  return result;
 }
