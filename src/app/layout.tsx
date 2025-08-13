@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClientCustomCursor from "@/components/ClientCustomCursor";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export const metadata: Metadata = {
   title: {
@@ -85,6 +86,11 @@ export const metadata: Metadata = {
   },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
+  other: {
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
   },
 };
 
@@ -173,12 +179,44 @@ export default function RootLayout({
                 }
               } catch (_) {}
               
+              // Prevent flash of old content
+              document.addEventListener('DOMContentLoaded', function() {
+                // Hide any old content immediately
+                const oldContent = document.querySelectorAll('[data-old-content]');
+                oldContent.forEach(el => el.style.display = 'none');
+                
+                // Show new content with fade-in effect
+                const newContent = document.querySelectorAll('[data-new-content]');
+                newContent.forEach(el => {
+                  el.style.opacity = '0';
+                  el.style.transition = 'opacity 0.3s ease-in-out';
+                  setTimeout(() => {
+                    el.style.opacity = '1';
+                  }, 50);
+                });
+              });
               
+              // Force reload if content seems stale
+              if (performance.navigation.type === 1) {
+                // This is a page refresh, ensure fresh content
+                window.addEventListener('load', function() {
+                  if (document.readyState === 'complete') {
+                    // Page is fully loaded, ensure we have the latest content
+                    setTimeout(() => {
+                      if (document.querySelector('[data-old-content]')) {
+                        window.location.reload();
+                      }
+                    }, 100);
+                  }
+                });
+              }
             `,
           }}
         />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
+        <LoadingScreen />
+
         {/* Skip to content link for accessibility */}
         <a
           href="#main-content"
