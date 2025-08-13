@@ -59,7 +59,7 @@ interface Project {
   id: string;
   title: string;
   description: string;
-  category: 'web' | 'graphics' | '3d';
+  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
   image_url: string;
   live_url?: string;
   github_url?: string;
@@ -82,8 +82,10 @@ export default function ProjectsManagement() {
   const categories = [
     { id: 'all', label: 'All Projects', color: 'gray' },
     { id: 'web', label: 'Web Development', color: 'blue' },
-    { id: 'graphics', label: 'Graphics Design', color: 'purple' },
-    { id: '3d', label: '3D Visualization', color: 'orange' }
+    { id: 'mobile', label: 'Mobile Apps', color: 'green' },
+    { id: 'ai', label: 'AI/ML Solutions', color: 'purple' },
+    { id: 'cloud', label: 'Cloud Infrastructure', color: 'orange' },
+    { id: 'enterprise', label: 'Enterprise Software', color: 'red' }
   ];
 
   useEffect(() => {
@@ -173,8 +175,10 @@ export default function ProjectsManagement() {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'web': return 'from-blue-500 to-cyan-500';
-      case 'graphics': return 'from-purple-500 to-pink-500';
-      case '3d': return 'from-orange-500 to-red-500';
+      case 'mobile': return 'from-green-500 to-emerald-500';
+      case 'ai': return 'from-purple-500 to-pink-500';
+      case 'cloud': return 'from-orange-500 to-red-500';
+      case 'enterprise': return 'from-red-500 to-rose-500';
       default: return 'from-gray-500 to-gray-600';
     }
   };
@@ -182,8 +186,10 @@ export default function ProjectsManagement() {
   const getCategoryBadge = (category: string) => {
     switch (category) {
       case 'web': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300';
-      case 'graphics': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300';
-      case '3d': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300';
+      case 'mobile': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
+      case 'ai': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300';
+      case 'cloud': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300';
+      case 'enterprise': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
     }
   };

@@ -74,11 +74,11 @@ export default function SkillsManagement() {
 
   const iconOptions = [
     { name: 'Web Development', value: 'web' },
-    { name: 'Graphics Design', value: 'graphics' },
-    { name: '3D Visualization', value: '3d' },
     { name: 'Mobile Development', value: 'mobile' },
+    { name: 'AI/ML', value: 'ai' },
     { name: 'Database', value: 'database' },
     { name: 'Cloud', value: 'cloud' },
+    { name: 'Enterprise', value: 'enterprise' },
   ];
 
   useEffect(() => {

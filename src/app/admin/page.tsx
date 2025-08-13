@@ -169,7 +169,7 @@ export default function AdminDashboard() {
         projects: projects.data?.length || 0,
         skills: skills.data?.length || 0,
         messages: messages.data?.length || 0,
-        views: Math.floor(Math.random() * 1000) + 500,
+        views: 1247, // Fixed value to avoid hydration mismatch
         weeklyViews: [120, 190, 300, 500, 200, 300, 450],
         monthlyGrowth: 15.3,
         recentActivity

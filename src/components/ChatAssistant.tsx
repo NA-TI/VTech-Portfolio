@@ -34,14 +34,8 @@ const QUICK_RESPONSES = [
 
 export default function ChatAssistant() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hello! I'm NA-TI's AI assistant. I can answer questions about my portfolio, skills, and services. How can I help you today?",
-      sender: 'assistant',
-      timestamp: new Date()
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [initialMessageAdded, setInitialMessageAdded] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -60,6 +54,19 @@ export default function ChatAssistant() {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    // Add initial message only on client-side to avoid hydration mismatch
+    if (!initialMessageAdded) {
+      setMessages([{
+        id: '1',
+        text: "Hello! I'm NA-TI's AI assistant. I can answer questions about my portfolio, skills, and services. How can I help you today?",
+        sender: 'assistant',
+        timestamp: new Date()
+      }]);
+      setInitialMessageAdded(true);
+    }
+  }, [initialMessageAdded]);
 
   const generateResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
@@ -137,7 +144,7 @@ export default function ChatAssistant() {
     if (!inputValue.trim()) return;
 
     const userMessage: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}`,
       text: inputValue,
       sender: 'user',
       timestamp: new Date()
@@ -151,7 +158,7 @@ export default function ChatAssistant() {
     setTimeout(() => {
       const response = generateResponse(inputValue);
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `assistant-${Date.now()}`,
         text: response,
         sender: 'assistant',
         timestamp: new Date()
@@ -159,7 +166,7 @@ export default function ChatAssistant() {
 
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
-    }, 1000 + Math.random() * 1000); // 1-2 seconds delay
+    }, 1500); // Fixed 1.5 second delay
   };
 
   const handleQuickResponse = (question: string) => {

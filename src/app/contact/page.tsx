@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useContent } from '@/hooks/useContent';
 
 // --- Arrow Icon for back button ---
 const ArrowLeftIcon = () => (
@@ -38,6 +39,7 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
+  const { content, isLoading } = useContent();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -46,6 +48,19 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const contactContent = content.contact;
 
   // Validation function
   const validateForm = (): boolean => {
@@ -135,11 +150,10 @@ export default function ContactPage() {
           
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-light tracking-tight text-gray-900 dark:text-white mb-4">
-              Let's <span className="font-medium">Connect</span>
+              {contactContent.hero.title}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Have a project in mind or just want to chat about design and development? 
-              I'd love to hear from you!
+              {contactContent.hero.description}
             </p>
           </div>
         </div>

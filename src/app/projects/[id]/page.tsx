@@ -73,31 +73,24 @@ interface Project {
   id: string;
   title: string;
   description: string;
-  category: 'web' | 'graphics' | '3d';
+  short_description?: string;
+  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
   image_url?: string;
   live_url?: string;
   github_url?: string;
+  case_study_url?: string;
   technologies: string[];
+  key_features?: string[];
   featured: boolean;
+  status?: 'planning' | 'development' | 'completed' | 'archived';
   styled_words?: StyledWord[];
-  
-  // Web Development specific
+
+  // Web Development specific (keeping backward fields)
   code_snippets?: string;
   tech_stack?: string[];
   deployment_info?: string;
   performance_metrics?: string;
-  
-  // Graphics Design specific
-  design_process?: string;
-  inspiration?: string;
-  color_palette?: string[];
-  design_tools?: string[];
-  
-  // 3D Design specific
-  modeling_process?: string;
-  software_used?: string[];
-  render_settings?: string;
-  
+
   // General details
   project_duration?: string;
   client?: string;
@@ -105,7 +98,7 @@ interface Project {
   challenges?: string;
   solutions?: string;
   lessons_learned?: string;
-  
+
   created_at: string;
   updated_at: string;
 }
@@ -384,45 +377,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </section>
             )}
 
-            {project.category === 'graphics' && (project.design_process || project.inspiration) && (
-              <section className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">🎨 Design Process</h2>
-                
-                {project.design_process && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Process</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{project.design_process}</p>
-                  </div>
-                )}
-                
-                {project.inspiration && (
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Inspiration</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{project.inspiration}</p>
-                  </div>
-                )}
-              </section>
-            )}
 
-            {project.category === '3d' && (project.modeling_process || project.render_settings) && (
-              <section className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-2xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">🎲 3D Details</h2>
-                
-                {project.modeling_process && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Modeling Process</h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{project.modeling_process}</p>
-                  </div>
-                )}
-                
-                {project.render_settings && (
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Render Settings</h3>
-                    <p className="text-gray-600 dark:text-gray-400">{project.render_settings}</p>
-                  </div>
-                )}
-              </section>
-            )}
 
             {/* Project Journey */}
             {(project.challenges || project.solutions || project.lessons_learned) && (
@@ -460,25 +415,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            {/* Color Palette for Graphics */}
-            {project.category === 'graphics' && project.color_palette && project.color_palette.length > 0 && (
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Color Palette</h3>
-                
-                <div className="space-y-3">
-                  {project.color_palette.map((color, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <div 
-                        className="w-8 h-8 rounded-lg border border-gray-300 dark:border-gray-600 shadow-sm"
-                        style={{ backgroundColor: color }}
-                      />
-                      <span className="text-sm text-gray-600 dark:text-gray-400 font-mono">{color}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* Tech Stack for Web */}
             {project.category === 'web' && project.tech_stack && project.tech_stack.length > 0 && (
               <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
@@ -488,21 +424,6 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {project.tech_stack.map((tech, index) => (
                     <div key={index} className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
                       {tech}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Software Used for 3D */}
-            {project.category === '3d' && project.software_used && project.software_used.length > 0 && (
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Software Used</h3>
-                
-                <div className="space-y-2">
-                  {project.software_used.map((software, index) => (
-                    <div key={index} className="px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm text-gray-700 dark:text-gray-300">
-                      {software}
                     </div>
                   ))}
                 </div>

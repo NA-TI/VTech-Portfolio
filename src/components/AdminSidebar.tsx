@@ -56,6 +56,16 @@ const SettingsIcon = () => (
   </svg>
 );
 
+const ContentIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+    <polyline points="14,2 14,8 20,8"/>
+    <line x1="16" y1="13" x2="8" y2="13"/>
+    <line x1="16" y1="17" x2="8" y2="17"/>
+    <polyline points="10,9 9,9 8,9"/>
+  </svg>
+);
+
 const LogoutIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -93,49 +103,14 @@ interface NavigationItem {
 }
 
 const navigation: NavigationItem[] = [
-  { 
-    name: 'Dashboard', 
-    href: '/admin', 
-    icon: DashboardIcon,
-    color: 'from-blue-500 to-cyan-500'
-  },
-  { 
-    name: 'Projects', 
-    href: '/admin/projects', 
-    icon: ProjectsIcon,
-    color: 'from-purple-500 to-pink-500'
-  },
-  { 
-    name: 'Skills', 
-    href: '/admin/skills', 
-    icon: SkillsIcon,
-    color: 'from-green-500 to-emerald-500'
-  },
-  { 
-    name: 'Profile', 
-    href: '/admin/profile', 
-    icon: ProfileIcon,
-    color: 'from-orange-500 to-red-500'
-  },
-  { 
-    name: 'Messages', 
-    href: '/admin/messages', 
-    icon: MessagesIcon,
-    badge: 3,
-    color: 'from-indigo-500 to-purple-500'
-  },
-  { 
-    name: 'Media', 
-    href: '/admin/media', 
-    icon: MediaIcon,
-    color: 'from-pink-500 to-rose-500'
-  },
-  { 
-    name: 'Settings', 
-    href: '/admin/settings', 
-    icon: SettingsIcon,
-    color: 'from-gray-500 to-gray-600'
-  },
+  { name: 'Dashboard', href: '/admin', icon: DashboardIcon },
+  { name: 'Projects', href: '/admin/projects', icon: ProjectsIcon },
+  { name: 'Skills', href: '/admin/skills', icon: SkillsIcon },
+  { name: 'Profile', href: '/admin/profile', icon: ProfileIcon },
+  { name: 'Messages', href: '/admin/messages', icon: MessagesIcon, badge: 3 },
+  { name: 'Content', href: '/admin/content', icon: ContentIcon },
+  { name: 'Media', href: '/admin/media', icon: MediaIcon },
+  { name: 'Settings', href: '/admin/settings', icon: SettingsIcon },
 ];
 
 interface AdminSidebarProps {
@@ -228,7 +203,7 @@ export default function AdminSidebar({
         } lg:translate-x-0 transition-transform duration-300`}
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="flex items-center justify-between">
             <AnimatePresence mode="wait">
               {!collapsed && (
@@ -239,7 +214,7 @@ export default function AdminSidebar({
                   className="flex items-center space-x-3"
                 >
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                    <div className="w-10 h-10 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
                       {user?.username?.[0]?.toUpperCase() || 'A'}
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
@@ -258,7 +233,7 @@ export default function AdminSidebar({
 
             <button
               onClick={onCollapse}
-              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 hidden lg:block"
+              className="p-2 rounded-lg hover:bg-gray-100 hover:shadow-sm dark:hover:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-slate-500/20 transition-all duration-200 hidden lg:block"
               aria-label="Toggle sidebar"
             >
               <motion.div
@@ -275,7 +250,9 @@ export default function AdminSidebar({
         <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
           {navigation.map((item, index) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const currentSegment = (pathname.split('/')[2] || '');
+            const itemSegment = (item.href.split('/')[2] || '');
+            const isActive = item.href === '/admin' ? currentSegment === '' : currentSegment === itemSegment;
 
             return (
               <motion.div
@@ -291,20 +268,15 @@ export default function AdminSidebar({
                     router.push(item.href);
                     if (mobileOpen) onMobileClose();
                   }}
-                  className={`group relative flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 font-medium ${
+                  className={`group relative flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 font-medium ${
                     isActive
-                      ? `bg-gradient-to-r ${item.color || 'from-blue-500 to-purple-500'} text-white shadow-lg`
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+                      ? 'bg-slate-800 dark:bg-slate-700 text-white shadow-sm border-l-4 border-slate-600'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500/20'
                   }`}
+                  aria-current={isActive ? 'page' : undefined}
                   title={collapsed ? item.name : undefined}
                 >
-                  {/* Active indicator */}
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeIndicator"
-                      className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
-                    />
-                  )}
+                  {/* Active indicator removed to avoid visual glitch; use ring highlight instead */}
 
                   <div className={`flex-shrink-0 ${isActive ? 'text-white' : ''}`}>
                     <Icon />
@@ -323,7 +295,7 @@ export default function AdminSidebar({
                           <span className={`ml-2 px-2 py-1 text-xs rounded-full font-bold ${
                             isActive 
                               ? 'bg-white/20 text-white' 
-                              : 'bg-red-500 text-white'
+                              : 'bg-slate-600 text-white'
                           }`}>
                             {item.badge}
                           </span>
@@ -334,7 +306,7 @@ export default function AdminSidebar({
 
                   {/* Collapsed badge */}
                   {collapsed && item.badge && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-slate-600 text-white text-xs rounded-full flex items-center justify-center font-bold">
                       {item.badge}
                     </div>
                   )}
@@ -352,7 +324,7 @@ export default function AdminSidebar({
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 text-sm"
+              className="flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500/20 rounded-lg transition-all duration-200 text-sm"
               title={collapsed ? 'View Site' : undefined}
             >
               <HomeIcon />
@@ -363,7 +335,7 @@ export default function AdminSidebar({
             <button
               onClick={handleLogout}
               disabled={isLoggingOut}
-              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors duration-200 text-sm disabled:opacity-50"
+              className="w-full flex items-center gap-3 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-red-50/50 dark:hover:bg-red-900/20 hover:text-red-700 dark:hover:text-red-400 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 rounded-lg transition-all duration-200 text-sm disabled:opacity-50"
               title={collapsed ? 'Logout' : undefined}
             >
               <LogoutIcon />

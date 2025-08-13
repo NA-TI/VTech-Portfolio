@@ -95,8 +95,10 @@ export default function WorkPage() {
                         <div className="flex items-center justify-between mb-3">
                           <span className="px-3 py-1 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-full">
                             {p.category === 'web' ? 'Web Application' : 
-                             p.category === 'graphics' ? 'Graphics Design' : 
-                             p.category === '3d' ? '3D Design' : 
+                             p.category === 'mobile' ? 'Mobile App' : 
+                             p.category === 'ai' ? 'AI/ML Solution' : 
+                             p.category === 'cloud' ? 'Cloud Infrastructure' :
+                             p.category === 'enterprise' ? 'Enterprise Software' :
                              'Software Solution'}
                           </span>
                           {p.live_url && (

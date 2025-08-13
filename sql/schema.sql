@@ -4,32 +4,25 @@ CREATE TABLE IF NOT EXISTS projects (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT NOT NULL,
-  category VARCHAR(50) NOT NULL CHECK (category IN ('web', 'graphics', '3d')),
+  category VARCHAR(50) NOT NULL CHECK (category IN ('web', 'mobile', 'ai', 'cloud', 'enterprise')),
   image_url TEXT,
   live_url TEXT,
   github_url TEXT,
   technologies TEXT[] DEFAULT '{}',
+  key_features TEXT[] DEFAULT '{}',
   featured BOOLEAN DEFAULT false,
+  status VARCHAR(50) DEFAULT 'completed' CHECK (status IN ('planning', 'development', 'completed', 'archived')),
   
-  -- Web Development specific fields
-  code_snippets JSONB,
-  tech_stack TEXT[],
-  deployment_info TEXT,
-  performance_metrics JSONB,
+  -- Category-specific JSON data
+  web_details JSONB DEFAULT '{}',
+  mobile_details JSONB DEFAULT '{}',
+  ai_details JSONB DEFAULT '{}',
+  cloud_details JSONB DEFAULT '{}',
+  enterprise_details JSONB DEFAULT '{}',
   
-  -- Graphics Design specific fields
-  design_process TEXT,
-  inspiration TEXT,
-  color_palette TEXT[],
-  design_tools TEXT[],
-  mockups JSONB,
-  
-  -- 3D Design specific fields
-  modeling_process TEXT,
-  software_used TEXT[],
-  render_settings TEXT,
-  wireframes JSONB,
-  final_renders JSONB,
+  -- URLs and Media
+  short_description VARCHAR(500),
+  case_study_url TEXT,
   
   -- General project details
   project_duration TEXT,

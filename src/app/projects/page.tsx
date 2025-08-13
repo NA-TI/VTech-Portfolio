@@ -5,191 +5,223 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import GhostLoader from '@/components/GhostLoader';
-import SelectiveTextStyling from '@/components/SelectiveTextStyling';
 
-// --- Arrow Icon for back button ---
-const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M9.551 13.5h13.449v-3h-13.449l4.449-4.449-2.121-2.121-7.879 7.879 7.879 7.879 2.121-2.121z"/>
+// Simple Icons
+const CodeIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
   </svg>
 );
 
-// --- Filter Icons ---
 const WebIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-    <line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
   </svg>
 );
 
-const GraphicsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m15 5 4 4L7 21l-4-4 12-12"/>
-    <path d="m13 7 4 4L5 23l-4-4 12-12"/>
+const MobileIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
   </svg>
 );
 
-const CubeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-    <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
-    <line x1="12" y1="22.08" x2="12" y2="12"/>
+const CloudIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
   </svg>
 );
 
-const GridIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7"/>
-    <rect x="14" y="3" width="7" height="7"/>
-    <rect x="14" y="14" width="7" height="7"/>
-    <rect x="3" y="14" width="7" height="7"/>
+const AIIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
   </svg>
 );
 
-// Enhanced project interface
+const EnterpriseIcon = () => (
+  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+  </svg>
+);
+
+const ExternalLinkIcon = () => (
+  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+  </svg>
+);
+
+const GitHubIcon = () => (
+  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.087-.731.084-.716.084-.716 1.205.082 1.838 1.215 1.838 1.215 1.07 1.835 2.809 1.305 3.492.998.108-.776.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+  </svg>
+);
+
+// Project Interface
 interface ProjectItem {
   id: string;
-  imageUrl: string;
   title: string;
-  category: 'web' | 'graphics' | '3d';
-  tags: string[];
-  year: string;
-  client?: string;
-  description?: string;
-  technologies?: string[];
+  description: string;
+  category: 'web' | 'mobile' | 'cloud' | 'ai' | 'enterprise';
+  technologies: string[];
+  image_url: string;
+  live_url?: string;
+  github_url?: string;
+  featured?: boolean;
+  status: 'completed' | 'in-progress' | 'maintenance';
 }
 
-// Project categories
+// Categories
 const categories = [
-  { id: 'all', label: 'All Projects', icon: <GridIcon />, color: 'from-gray-500 to-gray-600' },
-  { id: 'web', label: 'Web Design', icon: <WebIcon />, color: 'from-blue-500 to-cyan-500' },
-  { id: 'graphics', label: 'Graphics', icon: <GraphicsIcon />, color: 'from-purple-500 to-pink-500' },
-  { id: '3d', label: '3D Visualization', icon: <CubeIcon />, color: 'from-orange-500 to-red-500' },
+  { 
+    id: 'all', 
+    label: 'All Solutions', 
+    icon: <CodeIcon />, 
+    color: 'from-slate-600 to-slate-700'
+  },
+  { 
+    id: 'web', 
+    label: 'Web Applications', 
+    icon: <WebIcon />, 
+    color: 'from-blue-600 to-cyan-600'
+  },
+  { 
+    id: 'mobile', 
+    label: 'Mobile Apps', 
+    icon: <MobileIcon />, 
+    color: 'from-purple-600 to-indigo-600'
+  },
+  { 
+    id: 'cloud', 
+    label: 'Cloud Infrastructure', 
+    icon: <CloudIcon />, 
+    color: 'from-emerald-600 to-teal-600'
+  },
+  { 
+    id: 'ai', 
+    label: 'AI Integration', 
+    icon: <AIIcon />, 
+    color: 'from-orange-600 to-red-600'
+  },
+  { 
+    id: 'enterprise', 
+    label: 'Enterprise Systems', 
+    icon: <EnterpriseIcon />, 
+    color: 'from-gray-600 to-zinc-600'
+  }
 ];
 
-// Helper functions
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case 'web': return 'from-blue-500 to-cyan-500';
-    case 'graphics': return 'from-purple-500 to-pink-500';
-    case '3d': return 'from-orange-500 to-red-500';
-    default: return 'from-gray-500 to-gray-600';
-  }
-};
-
-const getCategoryLabel = (category: string) => {
-  switch (category) {
-    case 'web': return 'Web Design';
-    case 'graphics': return 'Graphics';
-    case '3d': return '3D Visualization';
-    default: return 'Project';
-  }
-};
-
-// Enhanced Project Card Component with unique style
+// Project Card Component
 const ProjectCard = ({ project, onClick }: { project: ProjectItem; onClick: () => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -30 }}
-      transition={{ duration: 0.6 }}
-      className="relative overflow-hidden rounded-xl bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-all duration-500 cursor-pointer border border-gray-100 dark:border-gray-800 max-w-4xl mx-auto"
-      onClick={onClick}
+      transition={{ duration: 0.5 }}
+      className="group relative bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden"
     >
-      <div className="relative flex flex-col lg:flex-row">
-        {/* Image Section: Top (Mobile) / Right (Desktop) */}
-        <div className="order-1 lg:order-2 lg:w-2/5 p-4 lg:p-6 flex items-center justify-center">
-          <motion.div
-            className="relative w-full max-w-sm"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="relative overflow-hidden rounded-lg shadow-md">
-              <img
-                src={project.imageUrl}
-                alt={project.title}
-                className="w-full h-auto object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.onerror = null;
-                  target.src = `https://placehold.co/600x400/fecaca/333333?text=${encodeURIComponent(project.title)}`;
-                }}
-              />
-            </div>
-          </motion.div>
+      {/* Featured Badge */}
+      {project.featured && (
+        <div className="absolute top-4 right-4 z-20">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg">
+            ⭐ Featured
+          </span>
+        </div>
+      )}
+
+      {/* Project Image */}
+      <div className="relative h-64 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+        <img
+          src={project.image_url}
+          alt={project.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = `https://placehold.co/600x400/e2e8f0/64748b?text=${encodeURIComponent(project.title)}`;
+          }}
+        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </div>
+
+      {/* Content */}
+      <div className="p-6">
+        {/* Category Badge */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="px-3 py-1 text-xs font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full">
+            {project.category === 'web' ? 'Web App' : 
+             project.category === 'mobile' ? 'Mobile App' : 
+             project.category === 'cloud' ? 'Cloud Solution' : 
+             project.category === 'ai' ? 'AI Integration' : 
+             project.category === 'enterprise' ? 'Enterprise' : 'Software'}
+          </span>
+          <div className="flex items-center space-x-2">
+            {project.live_url && (
+              <a
+                href={project.live_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-all duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLinkIcon />
+              </a>
+            )}
+            {project.github_url && (
+              <a
+                href={project.github_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <GitHubIcon />
+              </a>
+            )}
+          </div>
         </div>
 
-        {/* Content Section: Bottom (Mobile) / Left (Desktop) */}
-        <div className="order-2 lg:order-1 lg:w-3/5 p-5 lg:p-7 flex flex-col justify-center text-center lg:text-left">
-          {/* Category Badge */}
-          <div className="mb-3 flex justify-center lg:justify-start">
-            <span className="inline-block px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-bold rounded-full uppercase tracking-wider">
-              {getCategoryLabel(project.category)}
-            </span>
-          </div>
+        {/* Title */}
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+          {project.title}
+        </h3>
 
-          {/* Project Title */}
-          <div className="mb-4">
-            <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white leading-tight">
-              {project.title}
-            </h3>
-          </div>
+        {/* Description */}
+        <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+          {project.description}
+        </p>
 
-          {/* Project Description */}
-          {project.description && (
-            <div className="mb-5">
-              <p className="text-gray-600 dark:text-gray-300 text-base lg:text-lg leading-relaxed">
-                {project.description}
-              </p>
+        {/* Technologies */}
+        {project.technologies && project.technologies.length > 0 && (
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-2">
+              {project.technologies.slice(0, 3).map((tech, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md"
+                >
+                  {tech}
+                </span>
+              ))}
+              {project.technologies.length > 3 && (
+                <span className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md">
+                  +{project.technologies.length - 3} more
+                </span>
+              )}
             </div>
-          )}
-
-          {/* Technologies/Roles */}
-          {project.technologies && project.technologies.length > 0 && (
-            <div className="mb-6">
-              <div className="flex flex-wrap gap-2 justify-center lg:justify-start">
-                {project.technologies.slice(0, 3).map((tech, index) => (
-                  <span key={index} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-md text-sm font-medium">
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Call to Action */}
-          <div className="flex items-center justify-center lg:justify-start">
-            <button 
-              className="group relative px-6 py-3 bg-gray-900 text-white rounded-full font-medium text-sm overflow-hidden transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 border border-gray-700"
-              onClick={(e) => {
-                e.stopPropagation();
-                onClick();
-              }}
-            >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-              <div className="relative z-10 flex items-center gap-3">
-                <div className="w-2 h-2 bg-gray-400 rounded-full group-hover:bg-white group-hover:w-5 group-hover:h-5 transition-all duration-300 flex items-center justify-center">
-                  <svg
-                    className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 74 74"
-                  >
-                    <circle strokeWidth="3" stroke="black" r="35.5" cy="37" cx="37"></circle>
-                    <path
-                      fill="black"
-                      d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z"
-                    ></path>
-                  </svg>
-                </div>
-                <span>view case study</span>
-              </div>
-            </button>
           </div>
-        </div>
+        )}
+
+        {/* Action Button */}
+        <motion.button
+          onClick={onClick}
+          className="w-full px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black text-white rounded-xl font-semibold text-sm shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group/btn"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span>View Case Study</span>
+          <ExternalLinkIcon />
+        </motion.button>
       </div>
     </motion.div>
   );
@@ -206,14 +238,15 @@ export default function ProjectsPage() {
     // Transform ProjectData to ProjectItem format
     const transformedProjects: ProjectItem[] = projects.data.map((project) => ({
       id: project.id,
-      imageUrl: project.image_url,
       title: project.title,
-      category: project.category,
-      tags: project.technologies || [],
-      year: new Date(project.created_at || Date.now()).getFullYear().toString(),
-      client: undefined,
       description: project.description,
-      technologies: project.technologies || []
+      category: project.category as 'web' | 'mobile' | 'cloud' | 'ai' | 'enterprise',
+      technologies: project.technologies || [],
+      image_url: project.image_url,
+      live_url: project.live_url,
+      github_url: project.github_url,
+      featured: project.featured,
+      status: 'completed' as const
     }));
     
     if (activeCategory === 'all') {
@@ -223,12 +256,14 @@ export default function ProjectsPage() {
   }, [projects, activeCategory]);
 
   const stats = useMemo(() => {
-    if (!projects?.data) return { total: 0, web: 0, graphics: 0, '3d': 0 };
+    if (!projects?.data) return { total: 0, web: 0, mobile: 0, cloud: 0, ai: 0, enterprise: 0 };
     return {
       total: projects.data.length,
       web: projects.data.filter((p: any) => p.category === 'web').length,
-      graphics: projects.data.filter((p: any) => p.category === 'graphics').length,
-      '3d': projects.data.filter((p: any) => p.category === '3d').length,
+      mobile: projects.data.filter((p: any) => p.category === 'mobile').length,
+      cloud: projects.data.filter((p: any) => p.category === 'cloud').length,
+      ai: projects.data.filter((p: any) => p.category === 'ai').length,
+      enterprise: projects.data.filter((p: any) => p.category === 'enterprise').length,
     };
   }, [projects]);
 
@@ -236,152 +271,210 @@ export default function ProjectsPage() {
     router.push(`/projects/${projectId}`);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-slate-950 dark:via-black dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <GhostLoader size="lg" className="mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-slate-950 dark:via-black dark:to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Error Loading Projects</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-8">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-950 dark:via-black dark:to-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-slate-950 dark:via-black dark:to-slate-900">
+      {/* Header Section */}
+      <section className="relative overflow-hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-50/50 to-cyan-50/50 dark:from-blue-950/20 dark:to-cyan-950/20" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center"
+          >
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+              Software 
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent"> Solutions</span>
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Discover our portfolio of enterprise-grade applications, innovative platforms, and cutting-edge technology solutions.
+            </p>
+
+            {/* Statistics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto mb-12">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">{stats.total}+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Projects Delivered</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">99.9%</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Uptime Average</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">50+</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Technologies</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">100%</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Client Satisfaction</div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Category Navigation */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-12"
         >
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors mb-8">
-            <ArrowLeftIcon />
-            Back to Home
-          </Link>
-          
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full mb-8"
-            >
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Portfolio Showcase</span>
-            </motion.div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight"
-            >
-              My <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">Creative</span> Work
-            </motion.h1>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="max-w-3xl mx-auto"
-            >
-              <SelectiveTextStyling
-                text="A curated collection of projects that showcase my passion for innovative design and cutting-edge development"
-                styledWords={[
-                  { word: 'curated', style: 'bold' },
-                  { word: 'passion', style: 'bold-color', color: 'purple' },
-                  { word: 'innovative', style: 'italic' },
-                  { word: 'cutting-edge', style: 'bold-color', color: 'blue' }
-                ]}
-                className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed"
-              />
-            </motion.div>
+          <div className="mb-16">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
+              Filter by Technology Focus
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {categories.map((category, index) => (
+                <motion.button
+                  key={category.id}
+                  onClick={() => setActiveCategory(category.id)}
+                  className={`group relative p-6 rounded-xl text-left transition-all duration-300 ${
+                    activeCategory === category.id
+                      ? 'bg-gradient-to-r from-slate-800 to-slate-900 text-white shadow-xl border-2 border-slate-700'
+                      : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`p-2 rounded-lg ${
+                      activeCategory === category.id 
+                        ? 'bg-white/20 text-white' 
+                        : 'bg-gradient-to-r ' + category.color + ' text-white'
+                    }`}>
+                      {category.icon}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className={`font-semibold ${
+                        activeCategory === category.id 
+                          ? 'text-white' 
+                          : 'text-gray-900 dark:text-white'
+                      }`}>
+                        {category.label}
+                      </h3>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
           </div>
-
-          {/* Category Filters */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-wrap justify-center gap-6 mb-16"
-          >
-            {categories.map((category, index) => (
-              <motion.button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`group relative flex items-center gap-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-500 ${
-                  activeCategory === category.id
-                    ? `bg-gradient-to-r ${category.color} text-white shadow-xl scale-105`
-                    : 'bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700 border border-gray-200/50 dark:border-gray-700/50'
-                }`}
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + index * 0.1 }}
-              >
-                <div className={`p-2 rounded-lg ${activeCategory === category.id ? 'bg-white/20' : 'bg-gray-100 dark:bg-gray-700'}`}>
-                  {category.icon}
-                </div>
-                <span className="text-lg">{category.label}</span>
-                {category.id !== 'all' && (
-                  <span className={`ml-3 px-3 py-1 rounded-full text-sm font-bold ${
-                    activeCategory === category.id 
-                      ? 'bg-white/30 text-white' 
-                      : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'
-                  }`}>
-                    {stats[category.id as keyof typeof stats] || 0}
-                  </span>
-                )}
-              </motion.button>
-            ))}
-          </motion.div>
         </motion.div>
 
         {/* Projects Grid */}
-        <div className="space-y-16">
+        <div className="mb-12">
           <AnimatePresence mode="wait">
-            {loading ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center py-20"
-              >
-                <GhostLoader size="lg" className="mb-4" />
-                <p className="mt-4 text-gray-600 dark:text-gray-400">Loading projects...</p>
-              </motion.div>
-            ) : error ? (
-              <motion.div
-                key="error"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center py-20"
-              >
-                <p className="text-red-600 dark:text-red-400">Failed to load projects</p>
-              </motion.div>
-            ) : filteredProjects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <motion.div
                 key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-center py-20"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="text-center py-16"
               >
-                <p className="text-gray-600 dark:text-gray-400">No projects found in this category</p>
+                <div className="text-gray-400 mb-4">
+                  <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No Projects Found</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-6">
+                  We don't have any projects in the {categories.find(c => c.id === activeCategory)?.label} category yet.
+                </p>
+                <button 
+                  onClick={() => setActiveCategory('all')} 
+                  className="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                >
+                  View All Projects
+                </button>
               </motion.div>
             ) : (
               <motion.div
-                key={activeCategory}
+                key="projects"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="space-y-16"
+                className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8"
               >
                 {filteredProjects.map((project, index) => (
-                  <ProjectCard
+                  <motion.div
                     key={project.id}
-                    project={project}
-                    onClick={() => handleProjectClick(project.id)}
-                  />
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <ProjectCard 
+                      project={project}
+                      onClick={() => handleProjectClick(project.id)}
+                    />
+                  </motion.div>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
         </div>
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-20 text-center bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-12 text-white"
+        >
+          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Let's discuss how we can build a custom software solution that drives your business forward.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link 
+              href="/contact" 
+              className="px-8 py-4 bg-white text-slate-900 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Start a Project
+            </Link>
+            <Link 
+              href="/services" 
+              className="px-8 py-4 border border-white/20 text-white rounded-xl font-semibold hover:bg-white/10 transition-colors"
+            >
+              View Services
+            </Link>
+          </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -19,12 +19,16 @@ export interface Project {
   id: string;
   title: string;
   description: string;
-  category: 'web' | 'graphics' | '3d';
+  short_description?: string;
+  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise'; // ← Updated categories
   image_url: string;
   live_url?: string;
   github_url?: string;
+  case_study_url?: string; // ← New field
   technologies: string[];
+  key_features?: string[]; // ← New field
   featured: boolean;
+  status?: 'planning' | 'development' | 'completed' | 'archived'; // ← New field
   created_at: string;
   updated_at: string;
 }

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const { data, error } = await supabase
@@ -62,9 +65,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate category
-    if (!['web', 'graphics', '3d'].includes(category)) {
+    const validCategories = ['web', 'mobile', 'ai', 'cloud', 'enterprise'];
+    if (!validCategories.includes(category)) {
       return NextResponse.json(
-        { success: false, error: 'Category must be one of: web, graphics, 3d' },
+        { success: false, error: 'Category must be one of: web, mobile, ai, cloud, enterprise' },
         { status: 400 }
       );
     }

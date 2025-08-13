@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import FileUpload from '@/components/FileUpload';
 
 // Icons
 const ArrowLeftIcon = () => (
@@ -31,12 +32,21 @@ const ImageIcon = () => (
 interface ProjectForm {
   title: string;
   description: string;
-  category: 'web' | 'graphics' | '3d';
-  image_url: string;
+  short_description: string;
+  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
+  image_file: File | null;
   live_url: string;
   github_url: string;
+  case_study_url: string;
   technologies: string[];
+  key_features: string[];
   featured: boolean;
+  // Category-specific fields
+  project_type?: string;
+  platform?: string;
+  deployment_type?: string;
+  framework?: string;
+  database?: string;
 }
 
 export default function NewProject() {
@@ -45,14 +55,19 @@ export default function NewProject() {
   const [form, setForm] = useState<ProjectForm>({
     title: '',
     description: '',
+    short_description: '',
     category: 'web',
-    image_url: '',
+    image_file: null,
     live_url: '',
     github_url: '',
+    case_study_url: '',
     technologies: [],
+    key_features: [],
     featured: false
   });
   const [techInput, setTechInput] = useState('');
+  const [featureInput, setFeatureInput] = useState('');
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -74,6 +89,16 @@ export default function NewProject() {
     }
   };
 
+  const addFeature = () => {
+    if (featureInput.trim() && !form.key_features.includes(featureInput.trim())) {
+      setForm(prev => ({
+        ...prev,
+        key_features: [...prev.key_features, featureInput.trim()]
+      }));
+      setFeatureInput('');
+    }
+  };
+
   const removeTechnology = (tech: string) => {
     setForm(prev => ({
       ...prev,
@@ -81,10 +106,40 @@ export default function NewProject() {
     }));
   };
 
+  const removeFeature = (feature: string) => {
+    setForm(prev => ({
+      ...prev,
+      key_features: prev.key_features.filter(f => f !== feature)
+    }));
+  };
+
   const handleTechKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       addTechnology();
+    }
+  };
+
+  const handleFeatureKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addFeature();
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      setForm(prev => ({ ...prev, image_file: file }));
+      
+      // For now, create a blob URL for preview
+      // In production, you'd upload to your storage service
+      const blobUrl = URL.createObjectURL(file);
+      setUploadedImageUrl(blobUrl);
+      
+      toast.success('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Error handling file upload:', error);
+      toast.error('Failed to upload image');
     }
   };
 
@@ -99,13 +154,34 @@ export default function NewProject() {
     setIsLoading(true);
 
     try {
+      // Prepare form data
+      const projectData = {
+        title: form.title,
+        description: form.description,
+        short_description: form.short_description,
+        category: form.category,
+        image_url: uploadedImageUrl || '', // For now, using blob URL
+        live_url: form.live_url,
+        github_url: form.github_url,
+        case_study_url: form.case_study_url,
+        technologies: form.technologies,
+        key_features: form.key_features,
+        featured: form.featured,
+        // Category-specific data
+        project_type: form.project_type,
+        platform: form.platform,
+        deployment_type: form.deployment_type,
+        framework: form.framework,
+        database: form.database,
+      };
+
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(form),
+        body: JSON.stringify(projectData),
       });
 
       const data = await response.json();
@@ -121,6 +197,211 @@ export default function NewProject() {
       toast.error('Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getCategorySpecificFields = () => {
+    switch (form.category) {
+      case 'web':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Project Type
+              </label>
+              <select
+                value={form.project_type || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select type</option>
+                <option value="spa">Single Page Application</option>
+                <option value="ecommerce">E-commerce Platform</option>
+                <option value="dashboard">Admin Dashboard</option>
+                <option value="portfolio">Portfolio Website</option>
+                <option value="blog">Blog/CMS</option>
+                <option value="api">REST API</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Primary Framework
+              </label>
+              <select
+                value={form.framework || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select framework</option>
+                <option value="react">React</option>
+                <option value="nextjs">Next.js</option>
+                <option value="vue">Vue.js</option>
+                <option value="angular">Angular</option>
+                <option value="svelte">Svelte</option>
+                <option value="vanilla">Vanilla JS</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 'mobile':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Platform
+              </label>
+              <select
+                value={form.platform || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, platform: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select platform</option>
+                <option value="ios">iOS</option>
+                <option value="android">Android</option>
+                <option value="cross-platform">Cross-platform</option>
+                <option value="pwa">Progressive Web App</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Development Framework
+              </label>
+              <select
+                value={form.framework || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select framework</option>
+                <option value="react-native">React Native</option>
+                <option value="flutter">Flutter</option>
+                <option value="ionic">Ionic</option>
+                <option value="xamarin">Xamarin</option>
+                <option value="native">Native Development</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 'ai':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                AI Solution Type
+              </label>
+              <select
+                value={form.project_type || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select type</option>
+                <option value="chatbot">Chatbot/Virtual Assistant</option>
+                <option value="prediction">Predictive Analytics</option>
+                <option value="classification">Image/Text Classification</option>
+                <option value="recommendation">Recommendation System</option>
+                <option value="nlp">Natural Language Processing</option>
+                <option value="computer-vision">Computer Vision</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                ML Framework
+              </label>
+              <select
+                value={form.framework || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select framework</option>
+                <option value="tensorflow">TensorFlow</option>
+                <option value="pytorch">PyTorch</option>
+                <option value="scikit-learn">Scikit-learn</option>
+                <option value="openai">OpenAI API</option>
+                <option value="huggingface">Hugging Face</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 'cloud':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Cloud Provider
+              </label>
+              <select
+                value={form.platform || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, platform: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select provider</option>
+                <option value="aws">Amazon Web Services</option>
+                <option value="azure">Microsoft Azure</option>
+                <option value="gcp">Google Cloud Platform</option>
+                <option value="digitalocean">DigitalOcean</option>
+                <option value="vercel">Vercel</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Deployment Type
+              </label>
+              <select
+                value={form.deployment_type || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, deployment_type: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select deployment</option>
+                <option value="serverless">Serverless</option>
+                <option value="containers">Containerized</option>
+                <option value="vm">Virtual Machines</option>
+                <option value="kubernetes">Kubernetes</option>
+                <option value="static">Static Hosting</option>
+              </select>
+            </div>
+          </div>
+        );
+      case 'enterprise':
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Solution Type
+              </label>
+              <select
+                value={form.project_type || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select type</option>
+                <option value="erp">ERP System</option>
+                <option value="crm">CRM Platform</option>
+                <option value="inventory">Inventory Management</option>
+                <option value="hr">HR Management System</option>
+                <option value="finance">Financial Software</option>
+                <option value="workflow">Workflow Automation</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Database
+              </label>
+              <select
+                value={form.database || ''}
+                onChange={(e) => setForm(prev => ({ ...prev, database: e.target.value }))}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              >
+                <option value="">Select database</option>
+                <option value="postgresql">PostgreSQL</option>
+                <option value="mysql">MySQL</option>
+                <option value="oracle">Oracle</option>
+                <option value="mongodb">MongoDB</option>
+                <option value="mssql">SQL Server</option>
+              </select>
+            </div>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -184,7 +465,7 @@ export default function NewProject() {
             {/* Description */}
             <div>
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Description <span className="text-red-500">*</span>
+                Full Description <span className="text-red-500">*</span>
               </label>
               <textarea
                 id="description"
@@ -193,8 +474,25 @@ export default function NewProject() {
                 onChange={handleInputChange}
                 rows={4}
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
-                placeholder="Describe your project..."
+                placeholder="Provide a detailed description of your project..."
                 required
+              />
+            </div>
+
+            {/* Short Description */}
+            <div>
+              <label htmlFor="short_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Short Description
+              </label>
+              <input
+                type="text"
+                id="short_description"
+                name="short_description"
+                value={form.short_description}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                placeholder="Brief one-line description for previews"
+                maxLength={500}
               />
             </div>
 
@@ -212,8 +510,10 @@ export default function NewProject() {
                 required
               >
                 <option value="web">Web Development</option>
-                <option value="graphics">Graphics Design</option>
-                <option value="3d">3D Visualization</option>
+                <option value="mobile">Mobile Applications</option>
+                <option value="ai">AI/ML Solutions</option>
+                <option value="cloud">Cloud Infrastructure</option>
+                <option value="enterprise">Enterprise Software</option>
               </select>
             </div>
           </div>
@@ -224,38 +524,17 @@ export default function NewProject() {
               Media & Links
             </h2>
 
-            {/* Image URL */}
+            {/* Image Upload */}
             <div>
-              <label htmlFor="image_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Project Image URL
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Project Image
               </label>
-              <div className="relative">
-                <input
-                  type="url"
-                  id="image_url"
-                  name="image_url"
-                  value={form.image_url}
-                  onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-                  placeholder="https://example.com/image.jpg"
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <ImageIcon />
-                </div>
-              </div>
-              {form.image_url && (
-                <div className="mt-3">
-                  <img
-                    src={form.image_url}
-                    alt="Preview"
-                    className="w-32 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
+              <FileUpload
+                onFileUpload={handleFileUpload}
+                currentImage={uploadedImageUrl || undefined}
+                accept="image/*"
+                maxSize={5}
+              />
             </div>
 
             {/* Live URL */}
@@ -289,7 +568,33 @@ export default function NewProject() {
                 placeholder="https://github.com/username/repo"
               />
             </div>
+
+            {/* Case Study URL */}
+            <div>
+              <label htmlFor="case_study_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Case Study URL
+              </label>
+              <input
+                type="url"
+                id="case_study_url"
+                name="case_study_url"
+                value={form.case_study_url}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                placeholder="Link to detailed case study or documentation"
+              />
+            </div>
           </div>
+
+          {/* Category-Specific Fields */}
+          {form.category && (
+            <div className="space-y-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
+                {form.category.charAt(0).toUpperCase() + form.category.slice(1)} Specific Details
+              </h2>
+              {getCategorySpecificFields()}
+            </div>
+          )}
 
           {/* Technologies */}
           <div className="space-y-6">
@@ -332,6 +637,51 @@ export default function NewProject() {
                         type="button"
                         onClick={() => removeTechnology(tech)}
                         className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Key Features */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Key Features
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={featureInput}
+                  onChange={(e) => setFeatureInput(e.target.value)}
+                  onKeyPress={handleFeatureKeyPress}
+                  className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                  placeholder="e.g., Real-time sync, User authentication"
+                />
+                <button
+                  type="button"
+                  onClick={addFeature}
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                >
+                  Add
+                </button>
+              </div>
+              
+              {/* Features List */}
+              {form.key_features.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {form.key_features.map((feature, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center space-x-2 px-3 py-1 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-full text-sm"
+                    >
+                      <span>{feature}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFeature(feature)}
+                        className="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200"
                       >
                         ×
                       </button>

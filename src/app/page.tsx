@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { usePerformance } from '@/hooks/usePerformance';
 import { companyInfo } from '@/config/company-info';
+import { useHomepageContent } from '@/hooks/useContent';
 
 
 // --- Icons ---
@@ -55,10 +56,14 @@ const getSkillIcon = (iconName: string) => {
   switch (iconName) {
     case 'web':
       return <WebIcon />;
-    case 'graphics':
-      return <GraphicsIcon />;
-    case '3d':
-      return <CubeIcon />;
+    case 'mobile':
+      return <GraphicsIcon />; // reuse existing icon if no MobileIcon
+    case 'ai':
+      return <CubeIcon />; // reuse existing icon if no AiIcon
+    case 'cloud':
+      return <WebIcon />; // fallback to web icon for cloud
+    case 'enterprise':
+      return <WebIcon />; // fallback to web icon for enterprise
     default:
       return <WebIcon />;
   }
@@ -108,23 +113,27 @@ export default function Portfolio() {
   // Initialize performance monitoring
   usePerformance();
 
+  // Get content from CMS with loading state
+  const { content: homepageContent, company: companyContent, isLoading, isMounted } = useHomepageContent();
+
   useEffect(() => {
+    // Defer visibility animation to client to avoid SSR/CSR mismatch
     setIsVisible(true);
   }, []);
 
-  // Company information
-  const displayName = companyInfo.name;
-  const displayTitle = companyInfo.tagline;
-  const displayBio = companyInfo.bio;
-  const isAvailable = companyInfo.available;
-  const avatarUrl = companyInfo.logo || '/window.svg';
+  // Company information with CMS fallbacks
+  const displayName = companyContent?.name || companyInfo.name;
+  const displayTitle = companyContent?.tagline || companyInfo.tagline;
+  const displayBio = companyContent?.bio || companyInfo.bio;
+  const isAvailable = companyContent?.available ?? companyInfo.available;
+  const avatarUrl = companyContent?.logo || companyInfo.logo || '/window.svg';
   const socialLinks = companyInfo.social;
   const userSkills = companyInfo.services.slice(0, 3).map(service => service.title.replace(' Development', '').replace(' Solutions', ''));
   
-  // Create dynamic subtitle from services
-  const displaySubtitle = userSkills.length > 0 
+  // Use CMS content or fallback to generated subtitle
+  const displaySubtitle = homepageContent?.hero?.subtitle || (userSkills.length > 0 
     ? userSkills.join(' • ') 
-    : 'Software Development • Cloud Solutions • Digital Innovation';
+    : 'Software Development • Cloud Solutions • Digital Innovation');
 
   // Define the words for FlipWords animation
   const titleWords = ['Software Solutions', 'Digital Innovation', 'Tech Excellence'];
@@ -158,13 +167,18 @@ export default function Portfolio() {
             className="mb-8"
           >
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
-              Build <span className="bg-gradient-to-r from-slate-800 via-cyan-500 to-orange-500 bg-clip-text text-transparent">
-                Better
-              </span> Software
-                  </h1>
+              {isMounted && homepageContent?.hero?.title ? (
+                <span dangerouslySetInnerHTML={{ __html: homepageContent.hero.title.replace(/Software Solutions/g, '<span class="bg-gradient-to-r from-slate-800 via-cyan-500 to-orange-500 bg-clip-text text-transparent">Software Solutions</span>') }} />
+              ) : (
+                <>
+                  Build <span className="bg-gradient-to-r from-slate-800 via-cyan-500 to-orange-500 bg-clip-text text-transparent">
+                    Software Solutions
+                  </span> That Scale
+                </>
+              )}
+            </h1>
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
-              We craft custom software solutions that scale with your business. 
-              From web applications to cloud infrastructure.
+              {isMounted && homepageContent?.hero?.description ? homepageContent.hero.description : "VTech is a technology company building reliable software products and services. We craft modern web and mobile applications, integrate cloud-native solutions, and deliver clean user experiences that help businesses move faster."}
             </p>
                 </motion.div>
 
@@ -176,15 +190,15 @@ export default function Portfolio() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
                 >
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/contact" className="px-8 py-4 bg-gradient-to-r from-slate-800 to-cyan-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
-                Start Your Project
+              <Link href="/contact" className="px-8 py-4 bg-gradient-to-r from-slate-800 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2">
+{isMounted && homepageContent?.hero?.primaryButton ? homepageContent.hero.primaryButton : "Start Your Project"}
                       <ArrowRightIcon />
                     </Link>
                   </motion.div>
 
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link href="/portfolio" className="px-8 py-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 flex items-center gap-2">
-                View Our Work
+{isMounted && homepageContent?.hero?.secondaryButton ? homepageContent.hero.secondaryButton : "View Our Work"}
                       <ArrowRightIcon />
                     </Link>
                   </motion.div>
@@ -228,12 +242,20 @@ export default function Portfolio() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 dark:text-white mb-4">
-              What We <span className="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">
-                Build
-              </span>
+              {isMounted && homepageContent?.services?.title ? (
+                <span dangerouslySetInnerHTML={{ 
+                  __html: homepageContent.services.title.replace(/Build/g, '<span class="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">Build</span>') 
+                }} />
+              ) : (
+                <>
+                  What We <span className="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">
+                    Build
+                  </span>
+                </>
+              )}
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Three core areas where we excel
+              {isMounted && homepageContent?.services?.description ? homepageContent.services.description : "From concept to deployment, we handle every aspect of your software development needs."}
             </p>
           </motion.div>
 
@@ -305,7 +327,7 @@ export default function Portfolio() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link 
                 href="/contact" 
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-cyan-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
+                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
               >
                 Discuss Your Project
                 <ArrowRightIcon />
@@ -548,10 +570,10 @@ export default function Portfolio() {
           <div className="bg-gradient-to-r from-slate-800 via-cyan-600 to-orange-500 rounded-3xl p-12 text-white relative overflow-hidden">
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Transform Your Business?
+                {isMounted && homepageContent?.cta?.title ? homepageContent.cta.title : "Ready to Build Your Next Project?"}
               </h2>
               <p className="text-xl mb-8 text-white/90">
-                Partner with VTech to build scalable software solutions that drive growth and innovation.
+                {isMounted && homepageContent?.cta?.description ? homepageContent.cta.description : "Let's discuss how we can help bring your ideas to life with custom software solutions."}
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <motion.div
@@ -559,7 +581,7 @@ export default function Portfolio() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Link href="/contact" className="inline-flex items-center gap-3 px-8 py-4 bg-white text-slate-800 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 shadow-lg">
-                    Get Free Consultation
+{isMounted && homepageContent?.cta?.buttonText ? homepageContent.cta.buttonText : "Get Started Today"}
                     <ArrowRightIcon />
                   </Link>
                 </motion.div>

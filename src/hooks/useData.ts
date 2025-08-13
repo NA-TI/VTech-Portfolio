@@ -7,19 +7,24 @@ class DataCache {
   private broadcast?: BroadcastChannel;
 
   constructor() {
-    // Set up cross-tab communication
-    if (typeof window !== 'undefined') {
-      this.broadcast = new BroadcastChannel('portfolio-data-sync');
-      this.broadcast.onmessage = (event) => {
-        const { type, key, data } = event.data;
-        if (type === 'cache-update') {
-          this.cache.set(key, data);
-          this.notifySubscribers(key, data);
-        } else if (type === 'cache-invalidate') {
-          this.cache.delete(key);
-          this.notifySubscribers(key, null);
-        }
-      };
+    // Set up cross-tab communication only in browser environment
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      try {
+        this.broadcast = new BroadcastChannel('portfolio-data-sync');
+        this.broadcast.onmessage = (event) => {
+          const { type, key, data } = event.data;
+          if (type === 'cache-update') {
+            this.cache.set(key, data);
+            this.notifySubscribers(key, data);
+          } else if (type === 'cache-invalidate') {
+            this.cache.delete(key);
+            this.notifySubscribers(key, null);
+          }
+        };
+      } catch (error) {
+        console.warn('BroadcastChannel not available:', error);
+        this.broadcast = undefined;
+      }
     }
   }
 
@@ -78,8 +83,20 @@ class DataCache {
   }
 }
 
-// Global cache instance
-const globalCache = new DataCache();
+// Global cache instance - only create in browser environment
+let globalCache: DataCache;
+
+if (typeof window !== 'undefined') {
+  globalCache = new DataCache();
+} else {
+  // Create a minimal cache for SSR
+  globalCache = {
+    get: () => null,
+    set: () => {},
+    invalidate: () => {},
+    subscribe: () => () => {}
+  } as any;
+}
 
 // Profile data interfaces
 export interface StyledWord {
@@ -135,12 +152,16 @@ export interface ProjectData {
   id: string;
   title: string;
   description: string;
-  category: 'web' | 'graphics' | '3d';
+  short_description?: string;
+  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
   image_url: string;
   live_url?: string;
   github_url?: string;
+  case_study_url?: string;
   technologies?: string[];
+  key_features?: string[];
   featured?: boolean;
+  status?: 'planning' | 'development' | 'completed' | 'archived';
   styled_words?: StyledWord[];
   created_at?: string;
   updated_at?: string;
@@ -170,8 +191,14 @@ export function useData<T>(
     cacheTime = 5 * 60 * 1000 // 5 minutes
   } = options;
 
-  const [data, setData] = useState<T | null>(() => globalCache.get(endpoint));
-  const [isLoading, setIsLoading] = useState(!data);
+  const [data, setData] = useState<T | null>(() => {
+    // Only get from cache in browser environment
+    return typeof window !== 'undefined' ? globalCache.get(endpoint) : null;
+  });
+  const [isLoading, setIsLoading] = useState(() => {
+    // Always start with loading true in SSR to avoid hydration mismatch
+    return typeof window === 'undefined' ? true : !data;
+  });
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   
@@ -281,7 +308,7 @@ export function useData<T>(
 
   // Revalidate on focus
   useEffect(() => {
-    if (!revalidateOnFocus) return;
+    if (!revalidateOnFocus || typeof window === 'undefined') return;
 
     const handleFocus = () => {
       const now = Date.now();

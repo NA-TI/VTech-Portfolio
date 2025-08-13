@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { removeActiveSession, getTokenFromRequest, verifyAdminToken } from '@/lib/auth';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     // Get session info for cleanup

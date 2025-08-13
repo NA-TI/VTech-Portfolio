@@ -138,7 +138,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       />
 
       {/* Main Content */}
-      <div className={`flex-1 min-h-screen transition-all duration-300 ${
+      <div className={`flex-1 min-h-screen transition-[margin] duration-300 ease-out ${
         sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
       } ml-0 flex flex-col`}>
         
@@ -155,7 +155,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="lg:hidden p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500/20 transition-all duration-200"
                 aria-label="Open sidebar"
               >
                 <MenuIcon />
@@ -171,12 +171,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-64 bg-gray-100 dark:bg-gray-800 border-0 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="pl-10 pr-4 py-2 w-64 bg-gray-50 dark:bg-gray-800/90 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-slate-500/20 focus:border-slate-300 dark:focus:border-slate-600 hover:border-slate-300 dark:hover:border-slate-600 transition-all duration-200"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 transition-colors duration-200"
                   >
                     ×
                   </button>
@@ -187,12 +187,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* Right Section */}
             <div className="flex items-center space-x-4">
               {/* Notifications */}
-              <button className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              <button className="relative p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-500/20 transition-all duration-200">
                 <BellIcon />
-                <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
-                  3
-                </span>
+                {/* subtle badge */}
+                <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-white dark:ring-gray-900"></span>
               </button>
 
               {/* User Profile */}
@@ -206,7 +204,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   </p>
                 </div>
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                  <div className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-white font-bold text-sm shadow-lg">
                     {user?.username?.[0]?.toUpperCase() || 'A'}
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>

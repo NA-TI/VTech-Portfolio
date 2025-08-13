@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAuth } from '@/lib/auth';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -78,10 +81,10 @@ export async function PATCH(
     }
 
     // Validate category
-    const validCategories = ['web', 'graphics', '3d'];
+    const validCategories = ['web', 'mobile', 'ai', 'cloud', 'enterprise'];
     if (!validCategories.includes(category)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid category. Must be web, graphics, or 3d' },
+        { success: false, error: 'Invalid category. Must be web, mobile, ai, cloud, or enterprise' },
         { status: 400 }
       );
     }

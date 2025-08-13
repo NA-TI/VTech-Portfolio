@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useFooterContent } from "@/hooks/useContent";
 
 const GitHubIcon = ({ size = 20, className = "" }) => (
   <svg
@@ -44,6 +45,14 @@ const TwitterIcon = ({ size = 20, className = "" }) => (
 
 
 const Footer = () => {
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Get footer content from CMS
+  const { content: footerContent, company: companyContent, isLoading, isMounted: cmsIsMounted } = useFooterContent();
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   return (
     <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,12 +66,11 @@ const Footer = () => {
                   <span className="text-white font-bold text-sm">V</span>
                 </div>
                 <span className="text-xl font-semibold text-gray-900 dark:text-white">
-                  VTech Solutions
+                  {isMounted && cmsIsMounted && companyContent?.name ? companyContent.name : "VTech Solutions"}
                 </span>
               </div>
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 max-w-md">
-                Building scalable software solutions that drive business growth. 
-                From web applications to cloud infrastructure, we deliver technology that works.
+                {isMounted && cmsIsMounted && footerContent?.description ? footerContent.description : "Building scalable software solutions that drive business growth. From web applications to cloud infrastructure, we deliver technology that works."}
               </p>
               <div className="flex space-x-4">
                 <a
@@ -224,7 +232,7 @@ const Footer = () => {
         <div className="py-6 border-t border-gray-200 dark:border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              &copy; {new Date().getFullYear()} VTech Software Solutions. All rights reserved.
+              &copy; {new Date().getFullYear()} {isMounted && cmsIsMounted && footerContent?.copyright ? footerContent.copyright : (isMounted && companyContent?.name ? `${companyContent.name}. All rights reserved.` : "VTech Software Solutions. All rights reserved.")}
             </p>
             <div className="flex items-center space-x-6">
               <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -234,6 +242,14 @@ const Footer = () => {
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 Hosted on Vercel
               </span>
+              {isMounted && (
+                <>
+                  <span className="text-gray-300 dark:text-gray-600">•</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Last updated: {new Date().toLocaleDateString()}
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>
