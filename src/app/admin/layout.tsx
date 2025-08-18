@@ -1,37 +1,77 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Toaster } from 'react-hot-toast';
-import AdminSidebar from '@/components/AdminSidebar';
+import React, { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { Toaster } from "react-hot-toast";
+import AdminSidebar from "@/components/AdminSidebar";
 
 // Icons
 const MenuIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="3" y1="6" x2="21" y2="6"/>
-    <line x1="3" y1="12" x2="21" y2="12"/>
-    <line x1="3" y1="18" x2="21" y2="18"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 );
 
 const SearchIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8"/>
-    <path d="M21 21l-4.35-4.35"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="11" cy="11" r="8" />
+    <path d="M21 21l-4.35-4.35" />
   </svg>
 );
 
 const BellIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
   </svg>
 );
 
 const UserIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
   </svg>
 );
 
@@ -46,14 +86,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Check authentication
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/verify', {
-          credentials: 'include'
+        const response = await fetch("/api/auth/verify", {
+          credentials: "include",
         });
 
         if (response.ok) {
@@ -61,15 +101,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           setUser(data.user);
         } else {
           // Redirect to login if not on login page
-          if (pathname !== '/admin/login') {
-            router.push('/admin/login');
+          if (pathname !== "/admin/login") {
+            router.push("/admin/login");
             return;
           }
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
-        if (pathname !== '/admin/login') {
-          router.push('/admin/login');
+        console.error("Auth check failed:", error);
+        if (pathname !== "/admin/login") {
+          router.push("/admin/login");
           return;
         }
       } finally {
@@ -81,16 +121,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }, [pathname, router]);
 
   // If we're on the login page, just render children
-  if (pathname === '/admin/login') {
+  if (pathname === "/admin/login") {
     return (
       <>
-        <Toaster 
+        <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#374151',
-              color: '#fff',
+              background: "#374151",
+              color: "#fff",
             },
           }}
         />
@@ -118,13 +158,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#374151',
-            color: '#fff',
+            background: "#374151",
+            color: "#fff",
           },
         }}
       />
@@ -132,16 +172,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <AdminSidebar
         collapsed={sidebarCollapsed}
-        onCollapse={() => setSidebarCollapsed(prev => !prev)}
+        onCollapse={() => setSidebarCollapsed((prev) => !prev)}
         mobileOpen={sidebarOpen}
         onMobileClose={() => setSidebarOpen(false)}
       />
 
       {/* Main Content */}
-      <div className={`flex-1 min-h-screen transition-[margin] duration-300 ease-out ${
-        sidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'
-      } ml-0 flex flex-col`}>
-        
+      <div
+        className={`flex-1 min-h-screen transition-[margin] duration-300 ease-out ${
+          sidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
+        } ml-0 flex flex-col`}
+      >
         {/* Top Navigation Bar */}
         <motion.header
           initial={{ opacity: 0, y: -20 }}
@@ -149,7 +190,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 shadow-sm"
         >
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            
             {/* Left Section */}
             <div className="flex items-center space-x-4">
               {/* Mobile Menu Button */}
@@ -175,7 +215,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 />
                 {searchQuery && (
                   <button
-                    onClick={() => setSearchQuery('')}
+                    onClick={() => setSearchQuery("")}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-700 dark:focus:text-gray-300 transition-colors duration-200"
                   >
                     ×
@@ -197,7 +237,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <div className="flex items-center space-x-3">
                 <div className="hidden sm:block text-right">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
-                    {user?.username || 'Admin'}
+                    {user?.username || "Admin"}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Administrator
@@ -205,7 +245,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 </div>
                 <div className="relative">
                   <div className="w-8 h-8 rounded-full bg-slate-800 dark:bg-slate-700 flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                    {user?.username?.[0]?.toUpperCase() || 'A'}
+                    {user?.username?.[0]?.toUpperCase() || "A"}
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
                 </div>
@@ -222,9 +262,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             transition={{ delay: 0.1 }}
             className="p-4 sm:p-6 lg:p-8"
           >
-            <div className="max-w-full">
-              {children}
-            </div>
+            <div className="max-w-full">{children}</div>
           </motion.div>
         </main>
 
@@ -247,4 +285,3 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
-

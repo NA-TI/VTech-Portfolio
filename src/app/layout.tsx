@@ -1,19 +1,19 @@
 import React from "react";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import ConditionalNavigation from "@/components/ConditionalNavigation";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ClientCustomCursor from "@/components/ClientCustomCursor";
-import LoadingScreen from "@/components/LoadingScreen";
+import DynamicFavicon from "@/components/DynamicFavicon";
+import ApplySiteSettings from "@/components/ApplySiteSettings";
 
 export const metadata: Metadata = {
   title: {
-    default: "VTech Software Solutions - Custom Software Development",
-    template: "%s | VTech Solutions",
+    default: "NA-TI ናቲ - Creative Portfolio",
+    template: "%s | NA-TI ናቲ",
   },
   description:
-    "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
+    "Creative designer and developer portfolio",
   keywords: [
     "software development",
     "custom software",
@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     "software solutions",
   ],
   authors: [
-    { name: "VTech Software Solutions", url: "https://vtech-solutions.com" },
+    { name: "NA-TI ናቲ", url: "https://na-ti-portfolio.vercel.app" },
   ],
-  creator: "VTech Software Solutions",
-  publisher: "VTech Software Solutions",
+  creator: "NA-TI ናቲ",
+  publisher: "NA-TI ናቲ",
   formatDetection: {
     email: false,
     address: false,
@@ -49,11 +49,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://vtech-solutions.vercel.app",
-    title: "VTech Software Solutions - Custom Software Development",
-    description:
-      "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
-    siteName: "VTech Software Solutions",
+    url:
+      process.env.NEXT_PUBLIC_SITE_URL || "https://na-ti-portfolio.vercel.app",
+    title: "NA-TI ናቲ - Creative Portfolio",
+    description: "Creative designer and developer portfolio",
+    siteName: "NA-TI ናቲ",
     images: [
       {
         url: "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
@@ -65,9 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "VTech Software Solutions - Custom Software Development",
-    description:
-      "VTech Software Solutions specializes in custom software development, cloud solutions, and digital transformation. Building scalable, secure applications that drive business growth.",
+    title: "NA-TI ናቲ - Creative Portfolio",
+    description: "Creative designer and developer portfolio",
     images: [
       "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
     ],
@@ -113,8 +112,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         {/* Favicon */}
+        <link rel="icon" href="/vtech-logo.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon-profile.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
 
@@ -179,6 +178,10 @@ export default function RootLayout({
                 }
               } catch (_) {}
               
+              // Clear any cached content immediately
+              sessionStorage.removeItem('vtech-content-cache');
+              localStorage.removeItem('vtech-content-cache');
+              
               // Prevent flash of old content
               document.addEventListener('DOMContentLoaded', function() {
                 // Hide any old content immediately
@@ -196,27 +199,36 @@ export default function RootLayout({
                 });
               });
               
-              // Force reload if content seems stale
+              // Prevent browser caching of content
               if (performance.navigation.type === 1) {
-                // This is a page refresh, ensure fresh content
+                // This is a page refresh, clear any cached content
+                sessionStorage.removeItem('vtech-content-cache');
+                localStorage.removeItem('vtech-content-cache');
+                
+                // Force fresh content load
                 window.addEventListener('load', function() {
                   if (document.readyState === 'complete') {
-                    // Page is fully loaded, ensure we have the latest content
+                    // Ensure we have the latest content
                     setTimeout(() => {
-                      if (document.querySelector('[data-old-content]')) {
-                        window.location.reload();
+                      // Trigger content refresh if needed
+                      if (window.vtechContentRefresh) {
+                        window.vtechContentRefresh();
                       }
                     }, 100);
                   }
                 });
               }
+              
+              // Add content refresh function to window
+              window.vtechContentRefresh = function() {
+                // This will be called by components to refresh content
+                console.log('Content refresh triggered');
+              };
             `,
           }}
         />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <LoadingScreen />
-
         {/* Skip to content link for accessibility */}
         <a
           href="#main-content"
@@ -225,19 +237,11 @@ export default function RootLayout({
           Skip to main content
         </a>
 
-        {/* Loading indicator */}
-        <div
-          id="loading-indicator"
-          className="fixed top-0 left-0 right-0 z-50 h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 transform scale-x-0 origin-left transition-transform duration-300 ease-out"
-        ></div>
-
         <ErrorBoundary>
+          <DynamicFavicon />
+          <ApplySiteSettings />
           <ClientCustomCursor />
-          <Navigation />
-          <main id="main-content" className="pt-16">
-            {children}
-          </main>
-          <Footer />
+          <ConditionalNavigation>{children}</ConditionalNavigation>
         </ErrorBoundary>
 
         {/* Analytics placeholder */}

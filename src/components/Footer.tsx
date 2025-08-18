@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useFooterContent } from "@/hooks/useContent";
+import { useFooterContent, useNavigationContent } from "@/hooks/useContent";
+import { useHSBColors } from "@/hooks/useHSBColors";
+import { companyInfo } from "@/config/company-info";
 
 // --- Icons ---
 const GitHubIcon = () => (
@@ -78,6 +80,10 @@ const Footer = () => {
     isLoading,
     isMounted: cmsIsMounted,
   } = useFooterContent();
+  const { content: navigationContent, isMounted: navIsMounted } =
+    useNavigationContent();
+
+  const { brandGradients, createStyles } = useHSBColors();
 
   useEffect(() => {
     setIsMounted(true);
@@ -92,12 +98,30 @@ const Footer = () => {
             {/* Company Section */}
             <div className="lg:col-span-2">
               <div className="flex items-center mb-6">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-slate-800 to-cyan-500 flex items-center justify-center mr-3">
+                {navIsMounted && navigationContent?.logoImage ? (
+                  <img
+                    src={navigationContent.logoImage}
+                    alt={navigationContent?.brand || "Brand"}
+                    className="w-8 h-8 rounded-full object-cover border border-gray-300 dark:border-gray-700 mr-3"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                      const fallback =
+                        (e.currentTarget.nextSibling as HTMLElement) || null;
+                      if (fallback) fallback.classList.remove("hidden");
+                    }}
+                  />
+                ) : null}
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 ${navIsMounted && navigationContent?.logoImage ? "hidden" : ""}`}
+                  style={createStyles.gradient(brandGradients.secondary)}
+                >
                   <span className="text-white font-bold text-sm">V</span>
                 </div>
                 <span className="text-xl font-semibold text-gray-900 dark:text-white">
-                  {isMounted && cmsIsMounted && companyContent?.name
-                    ? companyContent.name
+                  {isMounted &&
+                  cmsIsMounted &&
+                  (companyContent?.name || navigationContent?.brand)
+                    ? companyContent?.name || navigationContent?.brand
                     : "VTech Solutions"}
                 </span>
               </div>
@@ -121,6 +145,35 @@ const Footer = () => {
                       {getSocialIcon(social.platform)}
                     </a>
                   ))}
+                {/* Fallback social links if CMS data is not available */}
+                {(!isMounted || !cmsIsMounted || !footerContent?.social) && (
+                  <>
+                    <a
+                      href={companyInfo.social.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                    >
+                      <GitHubIcon />
+                    </a>
+                    <a
+                      href={companyInfo.social.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                    >
+                      <LinkedInIcon />
+                    </a>
+                    <a
+                      href={companyInfo.social.twitter}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200"
+                    >
+                      <TwitterIcon />
+                    </a>
+                  </>
+                )}
               </div>
             </div>
 
@@ -174,14 +227,7 @@ const Footer = () => {
                         Portfolio
                       </Link>
                     </li>
-                    <li>
-                      <Link
-                        href="/pricing"
-                        className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                      >
-                        Pricing
-                      </Link>
-                    </li>
+
                     <li>
                       <Link
                         href="/case-studies"

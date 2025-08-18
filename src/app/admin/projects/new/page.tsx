@@ -1,31 +1,61 @@
 "use client";
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import FileUpload from '@/components/FileUpload';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import FileUpload from "@/components/FileUpload";
 
 // Icons
 const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="15,18 9,12 15,6"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="15,18 9,12 15,6" />
   </svg>
 );
 
 const SaveIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-    <polyline points="17,21 17,13 7,13 7,21"/>
-    <polyline points="7,3 7,8 15,8"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+    <polyline points="17,21 17,13 7,13 7,21" />
+    <polyline points="7,3 7,8 15,8" />
   </svg>
 );
 
 const ImageIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-    <circle cx="8.5" cy="8.5" r="1.5"/>
-    <polyline points="21,15 16,10 5,21"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21,15 16,10 5,21" />
   </svg>
 );
 
@@ -33,8 +63,9 @@ interface ProjectForm {
   title: string;
   description: string;
   short_description: string;
-  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
+  category: "web" | "mobile" | "ai" | "cloud" | "enterprise";
   image_file: File | null;
+  image_url: string;
   live_url: string;
   github_url: string;
   case_study_url: string;
@@ -53,101 +84,102 @@ export default function NewProject() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState<ProjectForm>({
-    title: '',
-    description: '',
-    short_description: '',
-    category: 'web',
+    title: "",
+    description: "",
+    short_description: "",
+    category: "web",
     image_file: null,
-    live_url: '',
-    github_url: '',
-    case_study_url: '',
+    image_url: "",
+    live_url: "",
+    github_url: "",
+    case_study_url: "",
     technologies: [],
     key_features: [],
-    featured: false
+    featured: false,
   });
-  const [techInput, setTechInput] = useState('');
-  const [featureInput, setFeatureInput] = useState('');
+  const [techInput, setTechInput] = useState("");
+  const [featureInput, setFeatureInput] = useState("");
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value, type } = e.target;
     const checked = (e.target as HTMLInputElement).checked;
-    
-    setForm(prev => ({
+
+    setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const addTechnology = () => {
     if (techInput.trim() && !form.technologies.includes(techInput.trim())) {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
-        technologies: [...prev.technologies, techInput.trim()]
+        technologies: [...prev.technologies, techInput.trim()],
       }));
-      setTechInput('');
+      setTechInput("");
     }
   };
 
   const addFeature = () => {
-    if (featureInput.trim() && !form.key_features.includes(featureInput.trim())) {
-      setForm(prev => ({
+    if (
+      featureInput.trim() &&
+      !form.key_features.includes(featureInput.trim())
+    ) {
+      setForm((prev) => ({
         ...prev,
-        key_features: [...prev.key_features, featureInput.trim()]
+        key_features: [...prev.key_features, featureInput.trim()],
       }));
-      setFeatureInput('');
+      setFeatureInput("");
     }
   };
 
   const removeTechnology = (tech: string) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      technologies: prev.technologies.filter(t => t !== tech)
+      technologies: prev.technologies.filter((t) => t !== tech),
     }));
   };
 
   const removeFeature = (feature: string) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
-      key_features: prev.key_features.filter(f => f !== feature)
+      key_features: prev.key_features.filter((f) => f !== feature),
     }));
   };
 
   const handleTechKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       addTechnology();
     }
   };
 
   const handleFeatureKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       addFeature();
     }
   };
 
-  const handleFileUpload = async (file: File) => {
-    try {
-      setForm(prev => ({ ...prev, image_file: file }));
-      
-      // For now, create a blob URL for preview
-      // In production, you'd upload to your storage service
-      const blobUrl = URL.createObjectURL(file);
-      setUploadedImageUrl(blobUrl);
-      
-      toast.success('Image uploaded successfully!');
-    } catch (error) {
-      console.error('Error handling file upload:', error);
-      toast.error('Failed to upload image');
-    }
+  const handleFileUpload = (file: File) => {
+    setForm((prev) => ({ ...prev, image_file: file }));
+  };
+
+  const handleImageUploadComplete = (url: string) => {
+    setUploadedImageUrl(url);
+    setForm((prev) => ({ ...prev, image_url: url }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!form.title || !form.description || !form.category) {
-      toast.error('Please fill in all required fields');
+      toast.error("Please fill in all required fields");
       return;
     }
 
@@ -160,7 +192,7 @@ export default function NewProject() {
         description: form.description,
         short_description: form.short_description,
         category: form.category,
-        image_url: uploadedImageUrl || '', // For now, using blob URL
+        image_url: uploadedImageUrl || form.image_url || "",
         live_url: form.live_url,
         github_url: form.github_url,
         case_study_url: form.case_study_url,
@@ -175,26 +207,26 @@ export default function NewProject() {
         database: form.database,
       };
 
-      const response = await fetch('/api/projects', {
-        method: 'POST',
+      const response = await fetch("/api/projects", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
+        credentials: "include",
         body: JSON.stringify(projectData),
       });
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Project created successfully!');
-        router.push('/admin/projects');
+        toast.success("Project created successfully!");
+        router.push("/admin/projects");
       } else {
-        toast.error(data.error || 'Failed to create project');
+        toast.error(data.error || "Failed to create project");
       }
     } catch (error) {
-      console.error('Error creating project:', error);
-      toast.error('Something went wrong. Please try again.');
+      console.error("Error creating project:", error);
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -202,7 +234,7 @@ export default function NewProject() {
 
   const getCategorySpecificFields = () => {
     switch (form.category) {
-      case 'web':
+      case "web":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -210,8 +242,10 @@ export default function NewProject() {
                 Project Type
               </label>
               <select
-                value={form.project_type || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                value={form.project_type || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, project_type: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select type</option>
@@ -228,8 +262,10 @@ export default function NewProject() {
                 Primary Framework
               </label>
               <select
-                value={form.framework || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                value={form.framework || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, framework: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select framework</option>
@@ -243,7 +279,7 @@ export default function NewProject() {
             </div>
           </div>
         );
-      case 'mobile':
+      case "mobile":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -251,8 +287,10 @@ export default function NewProject() {
                 Platform
               </label>
               <select
-                value={form.platform || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, platform: e.target.value }))}
+                value={form.platform || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, platform: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select platform</option>
@@ -267,8 +305,10 @@ export default function NewProject() {
                 Development Framework
               </label>
               <select
-                value={form.framework || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                value={form.framework || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, framework: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select framework</option>
@@ -281,7 +321,7 @@ export default function NewProject() {
             </div>
           </div>
         );
-      case 'ai':
+      case "ai":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -289,14 +329,18 @@ export default function NewProject() {
                 AI Solution Type
               </label>
               <select
-                value={form.project_type || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                value={form.project_type || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, project_type: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select type</option>
                 <option value="chatbot">Chatbot/Virtual Assistant</option>
                 <option value="prediction">Predictive Analytics</option>
-                <option value="classification">Image/Text Classification</option>
+                <option value="classification">
+                  Image/Text Classification
+                </option>
                 <option value="recommendation">Recommendation System</option>
                 <option value="nlp">Natural Language Processing</option>
                 <option value="computer-vision">Computer Vision</option>
@@ -307,8 +351,10 @@ export default function NewProject() {
                 ML Framework
               </label>
               <select
-                value={form.framework || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, framework: e.target.value }))}
+                value={form.framework || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, framework: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select framework</option>
@@ -321,7 +367,7 @@ export default function NewProject() {
             </div>
           </div>
         );
-      case 'cloud':
+      case "cloud":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -329,8 +375,10 @@ export default function NewProject() {
                 Cloud Provider
               </label>
               <select
-                value={form.platform || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, platform: e.target.value }))}
+                value={form.platform || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, platform: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select provider</option>
@@ -346,8 +394,13 @@ export default function NewProject() {
                 Deployment Type
               </label>
               <select
-                value={form.deployment_type || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, deployment_type: e.target.value }))}
+                value={form.deployment_type || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    deployment_type: e.target.value,
+                  }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select deployment</option>
@@ -360,7 +413,7 @@ export default function NewProject() {
             </div>
           </div>
         );
-      case 'enterprise':
+      case "enterprise":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -368,8 +421,10 @@ export default function NewProject() {
                 Solution Type
               </label>
               <select
-                value={form.project_type || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, project_type: e.target.value }))}
+                value={form.project_type || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, project_type: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select type</option>
@@ -386,8 +441,10 @@ export default function NewProject() {
                 Database
               </label>
               <select
-                value={form.database || ''}
-                onChange={(e) => setForm(prev => ({ ...prev, database: e.target.value }))}
+                value={form.database || ""}
+                onChange={(e) =>
+                  setForm((prev) => ({ ...prev, database: e.target.value }))
+                }
                 className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 <option value="">Select database</option>
@@ -422,7 +479,7 @@ export default function NewProject() {
             <span>Back to Projects</span>
           </Link>
         </div>
-        
+
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Create New Project
         </h1>
@@ -447,7 +504,10 @@ export default function NewProject() {
 
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Project Title <span className="text-red-500">*</span>
               </label>
               <input
@@ -464,7 +524,10 @@ export default function NewProject() {
 
             {/* Description */}
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Full Description <span className="text-red-500">*</span>
               </label>
               <textarea
@@ -481,7 +544,10 @@ export default function NewProject() {
 
             {/* Short Description */}
             <div>
-              <label htmlFor="short_description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="short_description"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Short Description
               </label>
               <input
@@ -498,7 +564,10 @@ export default function NewProject() {
 
             {/* Category */}
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Category <span className="text-red-500">*</span>
               </label>
               <select
@@ -526,20 +595,23 @@ export default function NewProject() {
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Project Image
-              </label>
               <FileUpload
                 onFileUpload={handleFileUpload}
+                onUploadComplete={handleImageUploadComplete}
                 currentImage={uploadedImageUrl || undefined}
                 accept="image/*"
                 maxSize={5}
+                folder="projects"
+                label="Project Image"
               />
             </div>
 
             {/* Live URL */}
             <div>
-              <label htmlFor="live_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="live_url"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Live Demo URL
               </label>
               <input
@@ -555,7 +627,10 @@ export default function NewProject() {
 
             {/* GitHub URL */}
             <div>
-              <label htmlFor="github_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="github_url"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 GitHub Repository URL
               </label>
               <input
@@ -571,7 +646,10 @@ export default function NewProject() {
 
             {/* Case Study URL */}
             <div>
-              <label htmlFor="case_study_url" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                htmlFor="case_study_url"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Case Study URL
               </label>
               <input
@@ -590,7 +668,8 @@ export default function NewProject() {
           {form.category && (
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-                {form.category.charAt(0).toUpperCase() + form.category.slice(1)} Specific Details
+                {form.category.charAt(0).toUpperCase() + form.category.slice(1)}{" "}
+                Specific Details
               </h2>
               {getCategorySpecificFields()}
             </div>
@@ -623,7 +702,7 @@ export default function NewProject() {
                   Add
                 </button>
               </div>
-              
+
               {/* Technologies List */}
               {form.technologies.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -668,7 +747,7 @@ export default function NewProject() {
                   Add
                 </button>
               </div>
-              
+
               {/* Features List */}
               {form.key_features.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -708,7 +787,10 @@ export default function NewProject() {
                 onChange={handleInputChange}
                 className="w-4 h-4 text-blue-500 bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-2"
               />
-              <label htmlFor="featured" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label
+                htmlFor="featured"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Featured Project
               </label>
               <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -731,7 +813,7 @@ export default function NewProject() {
               className="inline-flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <SaveIcon />
-              <span>{isLoading ? 'Creating...' : 'Create Project'}</span>
+              <span>{isLoading ? "Creating..." : "Create Project"}</span>
             </button>
           </div>
         </form>
@@ -739,4 +821,3 @@ export default function NewProject() {
     </div>
   );
 }
-

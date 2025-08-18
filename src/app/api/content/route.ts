@@ -27,15 +27,62 @@ interface SiteContent {
       description: string;
       ctaText: string;
     };
-    testimonials: {
+    testimonialsSection: {
       title: string;
       subtitle: string;
     };
+    capabilities?: Array<{
+      title: string;
+      capability: string;
+      metrics: string;
+      icon: string;
+      description: string;
+    }>;
     cta: {
       title: string;
       description: string;
       buttonText: string;
     };
+    // New sections for enhanced components
+    metrics: Array<{
+      value: string;
+      label: string;
+      description: string;
+      icon: string;
+      color: string;
+      suffix?: string;
+      prefix?: string;
+    }>;
+    processSteps: Array<{
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      deliverables: string[];
+    }>;
+    testimonials: Array<{
+      id: string;
+      name: string;
+      title: string;
+      company: string;
+      content: string;
+      rating: number;
+      image: string;
+      projectType: string;
+      duration: string;
+      results: Array<{
+        metric: string;
+        improvement: string;
+        timeframe: string;
+      }>;
+    }>;
+    interactiveFeatures: Array<{
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      details: string;
+    }>;
   };
 
   // Company Information
@@ -90,6 +137,21 @@ interface SiteContent {
       content: string;
       image?: string;
     }>;
+    teamMembers: Array<{
+      id: string;
+      name: string;
+      role: string;
+      description: string;
+      avatar: string;
+      photo?: string;
+      skills: string[];
+      social: Array<{
+        platform: string;
+        url: string;
+        icon: string;
+      }>;
+      status: "online" | "offline" | "busy";
+    }>;
   };
 
   // Services Page
@@ -139,6 +201,7 @@ const defaultContent: SiteContent = {
       primaryButton: "Start Your Project",
       secondaryButton: "View Our Work",
     },
+
     services: {
       title: "What We Build",
       subtitle: "Comprehensive Development Services",
@@ -146,16 +209,278 @@ const defaultContent: SiteContent = {
         "From concept to deployment, we handle every aspect of your software development needs.",
       ctaText: "See All Services",
     },
-    testimonials: {
+    testimonialsSection: {
       title: "Trusted by Startups",
       subtitle: "What Our Clients Say",
     },
+    capabilities: [
+      {
+        title: "Cloud Architecture",
+        capability: "Multi-cloud deployment strategies",
+        metrics: "99.9% uptime SLA",
+        icon: "☁️",
+        description:
+          "Design and implement resilient, auto-scaling cloud infrastructure across AWS, Azure, and GCP platforms.",
+      },
+      {
+        title: "DevOps & Security",
+        capability: "CI/CD pipeline automation",
+        metrics: "50% faster deployments",
+        icon: "🔒",
+        description:
+          "Implement secure development practices with automated testing, deployment, and infrastructure-as-code.",
+      },
+      {
+        title: "Performance Engineering",
+        capability: "High-traffic system optimization",
+        metrics: "10M+ requests/hour",
+        icon: "⚡",
+        description:
+          "Build systems that handle enterprise-scale traffic with sub-second response times and fault tolerance.",
+      },
+      {
+        title: "Data Engineering",
+        capability: "Real-time analytics pipelines",
+        metrics: "Petabyte-scale processing",
+        icon: "📊",
+        description:
+          "Design data architectures for business intelligence, machine learning, and real-time decision making.",
+      },
+      {
+        title: "API Development",
+        capability: "Microservices architecture",
+        metrics: "99.95% availability",
+        icon: "🔗",
+        description:
+          "Build scalable, versioned APIs with comprehensive documentation and robust authentication systems.",
+      },
+      {
+        title: "Quality Assurance",
+        capability: "Automated testing frameworks",
+        metrics: "95% code coverage",
+        icon: "✅",
+        description:
+          "Implement comprehensive testing strategies including unit, integration, and end-to-end automation.",
+      },
+    ],
     cta: {
       title: "Ready to Build Your Next Project?",
       description:
         "Let's discuss how we can help bring your ideas to life with custom software solutions.",
       buttonText: "Get Started Today",
     },
+    // Enhanced components data
+    metrics: [
+      {
+        value: "45",
+        label: "Performance Improvement",
+        description: "Average performance boost across all client projects",
+        icon: "🚀",
+        color: "vtech-cyan",
+        suffix: "%",
+      },
+      {
+        value: "2.3",
+        label: "Revenue Generated",
+        description: "Millions in additional revenue for our clients",
+        icon: "💎",
+        color: "vtech-purple",
+        prefix: "$",
+        suffix: "M",
+      },
+      {
+        value: "300",
+        label: "User Engagement",
+        description: "Average increase in user engagement for mobile apps",
+        icon: "📱",
+        color: "vtech-teal",
+        suffix: "%",
+      },
+      {
+        value: "50",
+        label: "Cost Reduction",
+        description: "Average operational cost savings for clients",
+        icon: "📊",
+        color: "vtech-cyan",
+        suffix: "K",
+      },
+    ],
+    processSteps: [
+      {
+        id: "discovery",
+        title: "Discovery & Planning",
+        description:
+          "We analyze your requirements and create a comprehensive project roadmap",
+        icon: "🔍",
+        deliverables: [
+          "Requirements document",
+          "Technical specification",
+          "Project timeline",
+          "Resource allocation",
+        ],
+      },
+      {
+        id: "design",
+        title: "Design & Prototyping",
+        description: "Create user-centered designs and interactive prototypes",
+        icon: "🎨",
+        deliverables: [
+          "UI/UX designs",
+          "Interactive prototypes",
+          "Design system",
+          "User flows",
+        ],
+      },
+      {
+        id: "development",
+        title: "Development & Testing",
+        description:
+          "Build robust solutions with continuous testing and quality assurance",
+        icon: "💻",
+        deliverables: [
+          "Working application",
+          "Unit tests",
+          "Integration tests",
+          "Performance optimization",
+        ],
+      },
+      {
+        id: "deployment",
+        title: "Deployment & Support",
+        description:
+          "Launch your solution and provide ongoing maintenance and support",
+        icon: "🚀",
+        deliverables: [
+          "Production deployment",
+          "User training",
+          "Documentation",
+          "Support plan",
+        ],
+      },
+    ],
+    testimonials: [
+      {
+        id: "1",
+        name: "Sarah Johnson",
+        title: "CTO",
+        company: "TechStart Inc.",
+        content:
+          "VTech delivered exceptional results on our custom CRM system. Their technical expertise and attention to detail exceeded our expectations.",
+        rating: 5,
+        image: "/testimonials/sarah.jpg",
+        projectType: "Custom CRM System",
+        duration: "3 months",
+        results: [
+          {
+            metric: "User Adoption Rate",
+            improvement: "+85%",
+            timeframe: "3 months",
+          },
+          {
+            metric: "Process Efficiency",
+            improvement: "+60%",
+            timeframe: "6 months",
+          },
+          {
+            metric: "Customer Satisfaction",
+            improvement: "+45%",
+            timeframe: "1 year",
+          },
+        ],
+      },
+      {
+        id: "2",
+        name: "Michael Chen",
+        title: "Product Manager",
+        company: "GrowthCorp",
+        content:
+          "The mobile app VTech built for us has been a game-changer. User engagement increased dramatically after launch.",
+        rating: 5,
+        image: "/testimonials/michael.jpg",
+        projectType: "Mobile Application",
+        duration: "4 months",
+        results: [
+          {
+            metric: "User Engagement",
+            improvement: "+300%",
+            timeframe: "2 months",
+          },
+          {
+            metric: "App Store Rating",
+            improvement: "4.8/5",
+            timeframe: "1 month",
+          },
+          {
+            metric: "Daily Active Users",
+            improvement: "+250%",
+            timeframe: "3 months",
+          },
+        ],
+      },
+      {
+        id: "3",
+        name: "Emily Rodriguez",
+        title: "Founder",
+        company: "HealthTech Solutions",
+        content:
+          "Working with VTech was seamless. They understood our complex requirements and delivered a robust, scalable solution on time.",
+        rating: 5,
+        image: "/testimonials/emily.jpg",
+        projectType: "Healthcare Platform",
+        duration: "6 months",
+        results: [
+          {
+            metric: "System Uptime",
+            improvement: "99.9%",
+            timeframe: "Ongoing",
+          },
+          {
+            metric: "Processing Speed",
+            improvement: "+75%",
+            timeframe: "2 months",
+          },
+          {
+            metric: "Cost Savings",
+            improvement: "$50K/year",
+            timeframe: "1 year",
+          },
+        ],
+      },
+    ],
+    interactiveFeatures: [
+      {
+        id: "1",
+        title: "Real-time Analytics",
+        description: "Advanced data visualization and insights",
+        icon: "📊",
+        details:
+          "Comprehensive analytics dashboard with real-time monitoring, custom reports, and predictive insights to drive data-informed decisions.",
+      },
+      {
+        id: "2",
+        title: "AI-Powered Automation",
+        description: "Intelligent process automation",
+        icon: "🤖",
+        details:
+          "Machine learning algorithms that automate repetitive tasks, optimize workflows, and provide intelligent recommendations.",
+      },
+      {
+        id: "3",
+        title: "Cloud Integration",
+        description: "Seamless cloud infrastructure",
+        icon: "☁️",
+        details:
+          "Enterprise-grade cloud solutions with auto-scaling, load balancing, and global CDN for optimal performance.",
+      },
+      {
+        id: "4",
+        title: "Mobile-First Design",
+        description: "Responsive and accessible interfaces",
+        icon: "📱",
+        details:
+          "Progressive web apps and native mobile applications with intuitive UX and cross-platform compatibility.",
+      },
+    ],
   },
 
   company: {
@@ -190,7 +515,7 @@ const defaultContent: SiteContent = {
         links: [
           { label: "Services", href: "/services" },
           { label: "Portfolio", href: "/portfolio" },
-          { label: "Pricing", href: "/pricing" },
+
           { label: "Case Studies", href: "/case-studies" },
         ],
       },
@@ -249,6 +574,93 @@ const defaultContent: SiteContent = {
         title: "Our Approach",
         content:
           "We combine cutting-edge technology with proven methodologies to create software that's both innovative and reliable.",
+      },
+    ],
+    teamMembers: [
+      {
+        id: "1",
+        name: "Alex Chen",
+        role: "CEO & Lead Developer",
+        description:
+          "Full-stack architect with 8+ years of experience. Passionate about scalable solutions and cutting-edge technologies.",
+        avatar: "👨‍💻",
+        photo: "",
+        skills: ["React/Next.js", "Node.js", "TypeScript", "AWS"],
+        social: [
+          { platform: "LinkedIn", url: "#", icon: "linkedin" },
+          { platform: "GitHub", url: "#", icon: "github" },
+          { platform: "Twitter", url: "#", icon: "twitter" },
+        ],
+        status: "online",
+      },
+      {
+        id: "2",
+        name: "Sarah Kim",
+        role: "UX/UI Designer",
+        description:
+          "Creative designer focused on user-centered design principles and creating intuitive digital experiences.",
+        avatar: "👩‍🎨",
+        photo: "",
+        skills: [
+          "Figma",
+          "Adobe Creative Suite",
+          "Prototyping",
+          "User Research",
+        ],
+        social: [
+          { platform: "LinkedIn", url: "#", icon: "linkedin" },
+          { platform: "Dribbble", url: "#", icon: "dribbble" },
+          { platform: "Behance", url: "#", icon: "behance" },
+        ],
+        status: "online",
+      },
+      {
+        id: "3",
+        name: "Marcus Rodriguez",
+        role: "Backend Engineer",
+        description:
+          "Experienced backend developer specializing in scalable architecture and database optimization.",
+        avatar: "👨‍💻",
+        photo: "",
+        skills: ["Python", "Django", "PostgreSQL", "Docker"],
+        social: [
+          { platform: "LinkedIn", url: "#", icon: "linkedin" },
+          { platform: "GitHub", url: "#", icon: "github" },
+          { platform: "Stack Overflow", url: "#", icon: "stackoverflow" },
+        ],
+        status: "busy",
+      },
+      {
+        id: "4",
+        name: "Lisa Wang",
+        role: "DevOps Engineer",
+        description:
+          "Infrastructure specialist focused on CI/CD pipelines and cloud-native solutions.",
+        avatar: "👩‍💻",
+        photo: "",
+        skills: ["AWS", "Kubernetes", "Terraform", "Jenkins"],
+        social: [
+          { platform: "LinkedIn", url: "#", icon: "linkedin" },
+          { platform: "GitHub", url: "#", icon: "github" },
+          { platform: "Medium", url: "#", icon: "medium" },
+        ],
+        status: "online",
+      },
+      {
+        id: "5",
+        name: "David Thompson",
+        role: "Mobile Developer",
+        description:
+          "Cross-platform mobile developer with expertise in React Native and native iOS/Android development.",
+        avatar: "👨‍💻",
+        photo: "",
+        skills: ["React Native", "Swift", "Kotlin", "Firebase"],
+        social: [
+          { platform: "LinkedIn", url: "#", icon: "linkedin" },
+          { platform: "GitHub", url: "#", icon: "github" },
+          { platform: "App Store", url: "#", icon: "appstore" },
+        ],
+        status: "offline",
       },
     ],
   },
@@ -314,7 +726,6 @@ export async function GET(request: NextRequest) {
       .from("site_content")
       .select("content_data, version, updated_at")
       .eq("content_key", "main")
-      .eq("is_published", true)
       .single();
 
     if (error) {
@@ -429,7 +840,6 @@ export async function PUT(request: NextRequest) {
         .insert({
           content_key: "main",
           content_data: sanitizedContent,
-          is_published: true,
           version: 1,
           updated_by: auth.username || null,
         })

@@ -94,8 +94,144 @@
   display: none !important;
 }
 
+/* Line clamp utilities for text truncation */
+.line-clamp-1 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.line-clamp-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+
 /* Critical CSS for above-the-fold content */
 :root {
+  /* HSB-based CSS Variables for Dynamic Color Management */
+  /* Based on your current slate-800, cyan-500, orange-500 system */
+
+  /* Gradient Text Classes */
+  .text-gradient-vtech-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(220, 40%, 30%) 0%,
+      hsl(190, 60%, 50%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-vtech-brand {
+    background: linear-gradient(
+      135deg,
+      hsl(220, 40%, 30%) 0%,
+      hsl(190, 60%, 50%) 50%,
+      hsl(260, 60%, 50%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-vtech-accent {
+    background: linear-gradient(
+      135deg,
+      hsl(190, 60%, 50%) 0%,
+      hsl(260, 60%, 50%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-vtech-tech {
+    background: linear-gradient(
+      135deg,
+      hsl(220, 40%, 30%) 0%,
+      hsl(260, 60%, 50%) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-vtech-software {
+    background: linear-gradient(
+      90deg,
+      hsl(190, 60%, 50%) 0%,
+      hsl(190, 70%, 60%) 25%,
+      hsl(30, 70%, 50%) 75%,
+      hsl(30, 80%, 60%) 100%
+    ) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+  }
+}
+
+/* VTech Color System */
+:root {
+  --vtech-slate-hue: 220;
+  --vtech-cyan-hue: 190;
+  --vtech-orange-hue: 30;
+
+  /* Slate variations (your current slate-800) */
+  --vtech-slate-50: hsl(var(--vtech-slate-hue), 8%, 98%);
+  --vtech-slate-100: hsl(var(--vtech-slate-hue), 10%, 95%);
+  --vtech-slate-200: hsl(var(--vtech-slate-hue), 12%, 90%);
+  --vtech-slate-300: hsl(var(--vtech-slate-hue), 15%, 80%);
+  --vtech-slate-400: hsl(var(--vtech-slate-hue), 20%, 70%);
+  --vtech-slate-500: hsl(var(--vtech-slate-hue), 25%, 60%);
+  --vtech-slate-600: hsl(var(--vtech-slate-hue), 30%, 50%);
+  --vtech-slate-700: hsl(var(--vtech-slate-hue), 35%, 40%);
+  --vtech-slate-800: hsl(var(--vtech-slate-hue), 40%, 30%);
+  --vtech-slate-900: hsl(var(--vtech-slate-hue), 45%, 20%);
+
+  /* Cyan variations (your current cyan-500) */
+  --vtech-cyan-50: hsl(var(--vtech-cyan-hue), 10%, 98%);
+  --vtech-cyan-100: hsl(var(--vtech-cyan-hue), 15%, 95%);
+  --vtech-cyan-200: hsl(var(--vtech-cyan-hue), 20%, 90%);
+  --vtech-cyan-300: hsl(var(--vtech-cyan-hue), 25%, 80%);
+  --vtech-cyan-400: hsl(var(--vtech-cyan-hue), 30%, 70%);
+  --vtech-cyan-500: hsl(var(--vtech-cyan-hue), 60%, 50%);
+  --vtech-cyan-600: hsl(var(--vtech-cyan-hue), 70%, 40%);
+  --vtech-cyan-700: hsl(var(--vtech-cyan-hue), 80%, 30%);
+  --vtech-cyan-800: hsl(var(--vtech-cyan-hue), 85%, 20%);
+  --vtech-cyan-900: hsl(var(--vtech-cyan-hue), 90%, 10%);
+
+  /* Orange variations (your current orange-500) */
+  --vtech-orange-50: hsl(var(--vtech-orange-hue), 10%, 98%);
+  --vtech-orange-100: hsl(var(--vtech-orange-hue), 15%, 95%);
+  --vtech-orange-200: hsl(var(--vtech-orange-hue), 20%, 90%);
+  --vtech-orange-300: hsl(var(--vtech-orange-hue), 25%, 80%);
+  --vtech-orange-400: hsl(var(--vtech-orange-hue), 30%, 70%);
+  --vtech-orange-500: hsl(var(--vtech-orange-hue), 70%, 50%);
+  --vtech-orange-600: hsl(var(--vtech-orange-hue), 80%, 40%);
+  --vtech-orange-700: hsl(var(--vtech-orange-hue), 85%, 30%);
+  --vtech-orange-800: hsl(var(--vtech-orange-hue), 90%, 20%);
+  --vtech-orange-900: hsl(var(--vtech-orange-hue), 95%, 10%);
+
+  /* Background and Foreground */
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -118,15 +254,6 @@ html {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
 }
 
 body {
@@ -248,4 +375,181 @@ h1 .bg-clip-text {
       rgba(99, 102, 241, 0.15),
       transparent 60%
     );
+}
+
+/* HSB-Enhanced Gradient Utilities */
+.gradient-vtech-primary {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-800) 0%,
+    var(--vtech-cyan-500) 100%
+  );
+}
+
+.gradient-vtech-brand {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-800) 0%,
+    var(--vtech-cyan-500) 50%,
+    var(--vtech-orange-500) 100%
+  );
+}
+
+.gradient-vtech-subtle {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-50) 0%,
+    var(--vtech-cyan-50) 100%
+  );
+}
+
+.gradient-vtech-dark {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-900) 0%,
+    var(--vtech-cyan-700) 100%
+  );
+}
+
+/* HSB-based hover effects using "remove white" principle */
+.hover-vtech-enrich {
+  transition: all 0.3s ease;
+}
+
+.hover-vtech-enrich:hover {
+  filter: brightness(1.1) saturate(1.2);
+}
+
+.hover-vtech-darken {
+  transition: all 0.3s ease;
+}
+
+.hover-vtech-darken:hover {
+  filter: brightness(0.9) saturate(1.1);
+}
+
+/* Enhanced radial spotlight using HSB variables */
+.radial-spotlight-hsb {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      600px circle at 50% -20%,
+      hsl(var(--vtech-cyan-hue), 60%, 50%, 0.15),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px circle at 0% 20%,
+      hsl(var(--vtech-orange-hue), 70%, 50%, 0.15),
+      transparent 60%
+    );
+}
+
+/* HSB-based text gradients */
+.text-gradient-vtech-brand {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-800) 0%,
+    var(--vtech-cyan-500) 50%,
+    var(--vtech-orange-500) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+.text-gradient-vtech-primary {
+  background: linear-gradient(
+    135deg,
+    var(--vtech-slate-800) 0%,
+    var(--vtech-cyan-500) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}
+
+/* Enhanced Glass Morphism Effects */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-morphism-dark {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Shadow Utilities */
+.shadow-3xl {
+  box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+.shadow-4xl {
+  box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.3);
+}
+
+/* Enhanced Radial Gradient */
+.bg-radial-gradient {
+  background: radial-gradient(
+    circle at center,
+    rgba(59, 130, 246, 0.1) 0%,
+    rgba(147, 51, 234, 0.05) 50%,
+    transparent 100%
+  );
+}
+
+/* Enhanced Animation Utilities */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Enhanced Border Gradients */
+.border-gradient {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(135deg, var(--vtech-cyan-500), var(--vtech-purple-500))
+      border-box;
+}
+
+.border-gradient-dark {
+  border: 2px solid transparent;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)) padding-box,
+    linear-gradient(135deg, var(--vtech-cyan-500), var(--vtech-purple-500))
+      border-box;
 }

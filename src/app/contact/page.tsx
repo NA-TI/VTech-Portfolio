@@ -1,34 +1,58 @@
 "use client";
-import React, { useState } from 'react';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useContent } from '@/hooks/useContent';
+import React, { useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import { useContent } from "@/hooks/useContent";
 
 // --- Arrow Icon for back button ---
 const ArrowLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M9.551 13.5h13.449v-3h-13.449l4.449-4.449-2.121-2.121-7.879 7.879 7.879 7.879 2.121-2.121z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M9.551 13.5h13.449v-3h-13.449l4.449-4.449-2.121-2.121-7.879 7.879 7.879 7.879 2.121-2.121z" />
   </svg>
 );
 
 // --- Send Icon ---
 const SendIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M2 21l21-9L2 3v7l15 2-15 2v7z" />
   </svg>
 );
 
 // --- Check Icon for success ---
 const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
   </svg>
 );
 
 // --- Error Icon ---
 const ErrorIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
   </svg>
 );
 
@@ -39,17 +63,25 @@ interface FormErrors {
 }
 
 export default function ContactPage() {
-  const { content, isLoading } = useContent();
+  const [isClient, setIsClient] = React.useState(false);
+  const { content, isLoading, isMounted } = useContent();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
+    name: "",
+    email: "",
+    message: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
 
-  if (isLoading) {
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Show loading state during SSR to prevent hydration mismatch
+  if (!isClient) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
         <div className="text-center">
@@ -60,79 +92,91 @@ export default function ContactPage() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading content...</p>
+        </div>
+      </div>
+    );
+  }
+
   const contactContent = content.contact;
 
   // Validation function
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = "Name is required";
     }
-    
+
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
-    
+
     if (!formData.message.trim()) {
-      newErrors.message = 'Message is required';
+      newErrors.message = "Message is required";
     } else if (formData.message.length < 10) {
-      newErrors.message = 'Message must be at least 10 characters long';
+      newErrors.message = "Message must be at least 10 characters long";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
     // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    setSubmitStatus('idle');
-    
+    setSubmitStatus("idle");
+
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
+      const response = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-      
+
       const result = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to send message');
+        throw new Error(result.error || "Failed to send message");
       }
-      
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      
+
+      setSubmitStatus("success");
+      setFormData({ name: "", email: "", message: "" });
+
       // Reset status after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
-      
+      setTimeout(() => setSubmitStatus("idle"), 5000);
     } catch (error) {
-      console.error('Form submission error:', error);
-      setSubmitStatus('error');
-      
+      console.error("Form submission error:", error);
+      setSubmitStatus("error");
+
       // Reset error status after 5 seconds
-      setTimeout(() => setSubmitStatus('idle'), 5000);
+      setTimeout(() => setSubmitStatus("idle"), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -143,11 +187,14 @@ export default function ContactPage() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
+          >
             <ArrowLeftIcon />
             Back to Home
           </Link>
-          
+
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-light tracking-tight text-gray-900 dark:text-white mb-4">
               {contactContent.hero.title}
@@ -163,7 +210,10 @@ export default function ContactPage() {
           <div className="bg-white dark:bg-black rounded-xl p-8 shadow-sm border border-gray-100 dark:border-gray-800">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Name
                 </label>
                 <input
@@ -175,15 +225,15 @@ export default function ContactPage() {
                   required
                   disabled={isSubmitting}
                   className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                    errors.name 
-                      ? 'border-red-500 focus:ring-red-500 dark:focus:ring-red-400' 
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400'
-                  } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    errors.name
+                      ? "border-red-500 focus:ring-red-500 dark:focus:ring-red-400"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400"
+                  } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   placeholder="Your name"
                   aria-describedby={errors.name ? "name-error" : undefined}
                 />
                 {errors.name && (
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-500 text-sm mt-1"
@@ -195,7 +245,10 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -207,15 +260,15 @@ export default function ContactPage() {
                   required
                   disabled={isSubmitting}
                   className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                    errors.email 
-                      ? 'border-red-500 focus:ring-red-500 dark:focus:ring-red-400' 
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400'
-                  } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    errors.email
+                      ? "border-red-500 focus:ring-red-500 dark:focus:ring-red-400"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400"
+                  } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   placeholder="your@email.com"
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {errors.email && (
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-500 text-sm mt-1"
@@ -227,7 +280,10 @@ export default function ContactPage() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
                   Message
                 </label>
                 <textarea
@@ -239,15 +295,17 @@ export default function ContactPage() {
                   required
                   disabled={isSubmitting}
                   className={`w-full px-4 py-3 rounded-lg border bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 transition-colors resize-none ${
-                    errors.message 
-                      ? 'border-red-500 focus:ring-red-500 dark:focus:ring-red-400' 
-                      : 'border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400'
-                  } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    errors.message
+                      ? "border-red-500 focus:ring-red-500 dark:focus:ring-red-400"
+                      : "border-gray-300 dark:border-gray-600 focus:ring-slate-500 dark:focus:ring-slate-400"
+                  } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   placeholder="Tell me about your project or just say hello!"
-                  aria-describedby={errors.message ? "message-error" : undefined}
+                  aria-describedby={
+                    errors.message ? "message-error" : undefined
+                  }
                 />
                 {errors.message && (
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="text-red-500 text-sm mt-1"
@@ -262,16 +320,20 @@ export default function ContactPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className={`w-full px-6 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-all duration-300 ${
-                  isSubmitting 
-                    ? 'bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-300 cursor-not-allowed' 
-                    : 'bg-slate-900 dark:bg-slate-100 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-slate-200'
+                  isSubmitting
+                    ? "bg-gray-400 dark:bg-gray-600 text-gray-200 dark:text-gray-300 cursor-not-allowed"
+                    : "bg-slate-900 dark:bg-slate-100 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-slate-200"
                 }`}
               >
                 {isSubmitting ? (
                   <>
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{
+                        duration: 1,
+                        repeat: Infinity,
+                        ease: "linear",
+                      }}
                       className="w-5 h-5 border-2 border-current border-t-transparent rounded-full"
                     />
                     Sending...
@@ -286,7 +348,7 @@ export default function ContactPage() {
 
             {/* Status Messages */}
             <AnimatePresence>
-              {submitStatus === 'success' && (
+              {submitStatus === "success" && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -295,12 +357,12 @@ export default function ContactPage() {
                 >
                   <CheckIcon />
                   <span className="text-green-800 dark:text-green-200">
-                    Message sent successfully! I'll get back to you soon.
+                    We will get back to you soon.
                   </span>
                 </motion.div>
               )}
 
-              {submitStatus === 'error' && (
+              {submitStatus === "error" && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -309,7 +371,8 @@ export default function ContactPage() {
                 >
                   <ErrorIcon />
                   <span className="text-red-800 dark:text-red-200">
-                    Something went wrong. Please try again or contact me directly.
+                    Something went wrong. Please try again or contact me
+                    directly.
                   </span>
                 </motion.div>
               )}
@@ -322,22 +385,22 @@ export default function ContactPage() {
               Or reach out directly via email or social media
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
-                href="mailto:natihabtamu199@gmail.com" 
+              <a
+                href="mailto:natihabtamu199@gmail.com"
                 className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
                 natihabtamu199@gmail.com
               </a>
-              <a 
-                href="https://linkedin.com/in/nati-habtamu" 
+              <a
+                href="https://linkedin.com/in/nati-habtamu"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
               >
                 LinkedIn
               </a>
-              <a 
-                href="https://github.com/natihabtamu" 
+              <a
+                href="https://github.com/natihabtamu"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -350,4 +413,4 @@ export default function ContactPage() {
       </div>
     </div>
   );
-} 
+}

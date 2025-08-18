@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-import { requireAuth } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { requireAuth } from "@/lib/auth";
 
 // Force dynamic rendering for this route
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,27 +18,27 @@ export async function GET(
     const { id } = await params;
 
     const { data, error } = await supabase
-      .from('skills')
-      .select('*')
-      .eq('id', id)
+      .from("skills")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) {
-      console.error('Error fetching skill:', error);
+      console.error("Error fetching skill:", error);
       return NextResponse.json(
-        { success: false, error: 'Skill not found' },
+        { success: false, error: "Skill not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data
+      data,
     });
   } catch (error) {
-    console.error('Error in skill GET:', error);
+    console.error("Error in skill GET:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -53,61 +53,58 @@ export async function PATCH(
     const session = await requireAuth(request);
     if (!session) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
+        { success: false, error: "Authentication required" },
         { status: 401 }
       );
     }
 
     const { id } = await params;
     const body = await request.json();
-    const {
-      title,
-      description,
-      icon_name,
-      color_gradient,
-      proficiency
-    } = body;
+    const { name, category, icon, color, proficiency } = body;
 
     // Validate required fields
-    if (!title || !description || proficiency === undefined) {
+    if (!name || !category || proficiency === undefined) {
       return NextResponse.json(
-        { success: false, error: 'Title, description, and proficiency are required' },
+        {
+          success: false,
+          error: "Name, category, and proficiency are required",
+        },
         { status: 400 }
       );
     }
 
     const updateData = {
-      title,
-      description,
-      icon_name: icon_name || null,
-      color_gradient: color_gradient || null,
+      name,
+      category,
+      icon: icon || null,
+      color: color || null,
       proficiency: proficiency || 0,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabase
-      .from('skills')
+      .from("skills")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating skill:', error);
+      console.error("Error updating skill:", error);
       return NextResponse.json(
-        { success: false, error: 'Failed to update skill' },
+        { success: false, error: "Failed to update skill" },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data
+      data,
     });
   } catch (error) {
-    console.error('Error in skill PATCH:', error);
+    console.error("Error in skill PATCH:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: "Internal server error" },
       { status: 500 }
     );
   }
@@ -122,34 +119,31 @@ export async function DELETE(
     const session = await requireAuth(request);
     if (!session) {
       return NextResponse.json(
-        { success: false, error: 'Authentication required' },
+        { success: false, error: "Authentication required" },
         { status: 401 }
       );
     }
 
     const { id } = await params;
 
-    const { error } = await supabase
-      .from('skills')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("skills").delete().eq("id", id);
 
     if (error) {
-      console.error('Error deleting skill:', error);
+      console.error("Error deleting skill:", error);
       return NextResponse.json(
-        { success: false, error: 'Failed to delete skill' },
+        { success: false, error: "Failed to delete skill" },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Skill deleted successfully'
+      message: "Skill deleted successfully",
     });
   } catch (error) {
-    console.error('Error in skill DELETE:', error);
+    console.error("Error in skill DELETE:", error);
     return NextResponse.json(
-      { success: false, error: 'Internal server error' },
+      { success: false, error: "Internal server error" },
       { status: 500 }
     );
   }

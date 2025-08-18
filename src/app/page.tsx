@@ -2,10 +2,16 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { usePerformance } from "@/hooks/usePerformance";
+
 // Removed hardcoded companyInfo import - now using CMS data
 import { useHomepageContent } from "@/hooks/useContent";
 import { companyInfo } from "@/config/company-info";
+import EnhancedMetrics from "@/components/EnhancedMetrics";
+import ProcessDiagram from "@/components/ProcessDiagram";
+import EnhancedTestimonials from "@/components/EnhancedTestimonials";
+import InteractiveElements from "@/components/InteractiveElements";
+import { useHSBColors } from "@/hooks/useHSBColors";
+import { useSkills } from "@/hooks/useData";
 
 // --- Icons ---
 
@@ -117,7 +123,7 @@ const getSkillIcon = (iconName: string) => {
   }
 };
 
-// Client-side only floating elements for background
+// Enhanced floating elements with better performance
 const FloatingElements = () => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -126,28 +132,56 @@ const FloatingElements = () => {
   }, []);
 
   if (!isMounted) {
-    return null;
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" />
+    );
   }
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(6)].map((_, i) => (
+      {/* Enhanced floating particles */}
+      {[...Array(8)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute w-2 h-2 bg-gradient-to-r from-slate-400 to-cyan-400 rounded-full opacity-20"
+          className="absolute w-1 h-1 bg-gradient-to-r from-vtech-cyan-400/30 to-vtech-purple-400/30 rounded-full"
+          animate={{
+            x: [0, 150, 0],
+            y: [0, -150, 0],
+            scale: [1, 1.5, 1],
+            opacity: [0.3, 0.8, 0.3],
+          }}
+          transition={{
+            duration: 15 + i * 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.5,
+          }}
+          style={{
+            left: `${10 + i * 12}%`,
+            top: `${15 + i * 8}%`,
+          }}
+        />
+      ))}
+
+      {/* Larger floating elements */}
+      {[...Array(3)].map((_, i) => (
+        <motion.div
+          key={`large-${i}`}
+          className="absolute w-4 h-4 bg-gradient-to-r from-vtech-cyan-500/20 to-vtech-purple-500/20 rounded-full blur-sm"
           animate={{
             x: [0, 100, 0],
             y: [0, -100, 0],
-            scale: [1, 1.5, 1],
+            rotate: [0, 180, 360],
           }}
           transition={{
-            duration: 10 + i * 2,
+            duration: 20 + i * 5,
             repeat: Infinity,
             ease: "easeInOut",
+            delay: i * 2,
           }}
           style={{
-            left: `${10 + i * 15}%`,
-            top: `${20 + i * 10}%`,
+            left: `${20 + i * 25}%`,
+            top: `${30 + i * 15}%`,
           }}
         />
       ))}
@@ -157,9 +191,14 @@ const FloatingElements = () => {
 
 export default function Portfolio() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [contentReady, setContentReady] = useState(false);
 
-  // Initialize performance monitoring
-  usePerformance();
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+    setIsVisible(true);
+  }, []);
 
   // Get content from CMS with loading state
   const {
@@ -169,10 +208,25 @@ export default function Portfolio() {
     isMounted,
   } = useHomepageContent();
 
+  // Mark content as ready when it's loaded and mounted
   useEffect(() => {
-    // Defer visibility animation to client to avoid SSR/CSR mismatch
-    setIsVisible(true);
-  }, []);
+    if (isMounted && !isLoading) {
+      const timer = setTimeout(() => {
+        setContentReady(true);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isMounted, isLoading]);
+
+  // HSB Color System - only initialize on client
+  const hsBColors = useHSBColors();
+  const { brandGradients, brandColors, createStyles } = isClient
+    ? hsBColors
+    : {
+        brandGradients: {},
+        brandColors: {},
+        createStyles: { gradient: () => ({}) },
+      };
 
   // Company information with CMS fallbacks
   const displayName = companyContent?.name || "VTech Software Solutions";
@@ -200,7 +254,15 @@ export default function Portfolio() {
       icon: "twitter",
     },
   ];
-  const userSkills = ["Web Development", "Mobile Apps", "Cloud Solutions"];
+  // Get skills from database
+  const { data: skillsResponse } = useSkills();
+  const skills = skillsResponse?.data || [];
+
+  // Extract skill titles for subtitle
+  const userSkills =
+    skills.length > 0
+      ? skills.slice(0, 3).map((skill) => skill.name)
+      : ["Web Development", "Mobile Apps", "Cloud Solutions"];
 
   // Use CMS content or fallback to generated subtitle
   const displaySubtitle =
@@ -216,128 +278,775 @@ export default function Portfolio() {
     "Tech Excellence",
   ];
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 dark:from-slate-950 dark:via-black dark:to-slate-900">
-      <FloatingElements />
+  // Add refresh function to window for debugging
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      (window as any).refreshContent = () => {
+        console.log("🔄 Manual content refresh triggered");
+        window.location.reload();
+      };
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="radial-spotlight"></div>
-        <div className="max-w-6xl mx-auto text-center">
-          {/* Status Badge */}
+      // Add a visible refresh button for testing
+      (window as any).showRefreshButton = () => {
+        const button = document.createElement("button");
+        button.textContent = "🔄 Refresh Content";
+        button.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 9999;
+          background: #3b82f6;
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 8px;
+          cursor: pointer;
+          font-size: 14px;
+        `;
+        button.onclick = () => window.location.reload();
+        document.body.appendChild(button);
+      };
+    }
+  }, []);
+
+  // Show loading state until content is ready to prevent flash of old content
+  if (!isClient || !contentReady) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 dark:from-slate-950 dark:via-black dark:to-slate-900">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="relative">
+              {/* Enhanced spinner */}
+              <div className="relative">
+                <div className="animate-spin rounded-full h-20 w-20 border-4 border-slate-200 dark:border-slate-700 mx-auto mb-8">
+                  <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-transparent border-t-vtech-cyan-500 animate-spin"></div>
+                </div>
+              </div>
+
+              {/* VTech branding */}
+              <div className="text-3xl font-bold text-slate-800 dark:text-slate-200 mb-3">
+                VTech
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 text-sm">
+                Loading your experience...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50 dark:from-slate-950 dark:via-black dark:to-slate-900 relative overflow-hidden">
+      {/* FloatingElements removed - animated background circles disabled */}
+
+      {/* Enhanced Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center px-4 py-8 overflow-hidden">
+        {/* Enhanced background effects */}
+        <div className="absolute inset-0">
+          {/* Radial gradient overlay */}
+          <div className="absolute inset-0 bg-radial-gradient opacity-30"></div>
+
+          {/* Animated background shapes removed - circle animations disabled */}
+        </div>
+
+        <div className="max-w-7xl mx-auto text-center relative z-10">
+          {/* Enhanced Status Badge */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 dark:bg-green-400/10 border border-green-500/20 dark:border-green-400/20 rounded-full mb-8"
+            initial={{ opacity: 0, scale: 0.9, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
+            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500/10 to-emerald-500/10 dark:from-green-400/10 dark:to-emerald-400/10 border border-green-500/20 dark:border-green-400/20 rounded-full mb-12 backdrop-blur-sm shadow-lg"
           >
-            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span className="text-sm font-medium text-green-700 dark:text-green-400">
+            <div className="relative">
+              <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+            </div>
+            <span className="text-sm font-semibold text-green-700 dark:text-green-400 tracking-wide">
               Ready for new projects
             </span>
           </motion.div>
 
-          {/* Main Headline */}
+          {/* Enhanced Main Headline */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.2, ease: "easeOut" }}
+            className="mb-12"
+          >
+            <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tight text-gray-900 dark:text-white mb-8 leading-none">
+              {isClient && isMounted && homepageContent?.hero?.title ? (
+                <span className="block">
+                  {homepageContent.hero.title.split(" ").map((word, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.3 + index * 0.1 }}
+                      className="inline-block mr-4"
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
+                </span>
+              ) : (
+                <>
+                  <motion.span
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="block"
+                  >
+                    We Build
+                  </motion.span>
+                  <motion.span
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="block"
+                  >
+                    <span
+                      className="text-gradient-vtech-software"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, hsl(190, 60%, 50%) 0%, hsl(190, 70%, 60%) 25%, hsl(30, 70%, 50%) 75%, hsl(30, 80%, 60%) 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                        color: "transparent",
+                      }}
+                    >
+                      Software That Actually Works
+                    </span>
+                  </motion.span>
+                </>
+              )}
+            </h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="text-xl md:text-2xl lg:text-3xl text-gray-600 dark:text-gray-300 font-light max-w-4xl mx-auto leading-relaxed"
+            >
+              {isClient && isMounted && homepageContent?.hero?.description
+                ? homepageContent.hero.description
+                : "Founded with a mission to create reliable, scalable software solutions that help businesses thrive in the digital age."}
+            </motion.p>
+          </motion.div>
+
+          {/* Enhanced Primary CTA */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-8"
+            transition={{ duration: 0.8, delay: 0.9 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-32"
           >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-gray-900 dark:text-white mb-6 leading-tight">
-              {isMounted && homepageContent?.hero?.title ? (
+            <motion.div
+              whileHover={{ scale: 1.02, y: -3 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative group"
+            >
+              <Link
+                href="/contact"
+                className="relative px-8 py-4 text-white rounded-2xl font-semibold text-base shadow-xl hover:shadow-2xl transition-all duration-500 flex items-center gap-3 overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 hover:from-blue-700 hover:via-purple-700 hover:to-cyan-700"
+              >
+                <span className="relative z-10">
+                  {isMounted && homepageContent?.hero?.primaryButton
+                    ? homepageContent.hero.primaryButton
+                    : "Start Your Project"}
+                </span>
+                <motion.div
+                  className="relative z-10"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <ArrowRightIcon />
+                </motion.div>
+                {/* Enhanced button glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 to-purple-500/30 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              </Link>
+            </motion.div>
+
+            <motion.div
+              whileHover={{ scale: 1.02, y: -3 }}
+              whileTap={{ scale: 0.98 }}
+              className="relative group"
+            >
+              <Link
+                href="/portfolio"
+                className="relative px-8 py-4 border-2 rounded-2xl font-semibold text-base transition-all duration-500 flex items-center gap-3 overflow-hidden backdrop-blur-sm bg-white/5 hover:bg-white/10 border-gray-300/30 hover:border-gray-300/50 text-gray-800 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
+              >
+                <span className="relative z-10">
+                  {isMounted && homepageContent?.hero?.secondaryButton
+                    ? homepageContent.hero.secondaryButton
+                    : "View Our Work"}
+                </span>
+                <motion.div
+                  className="relative z-10"
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.5,
+                  }}
+                >
+                  <ArrowRightIcon />
+                </motion.div>
+                {/* Subtle glow effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-gray-500/10 to-gray-400/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Enhanced Metrics Section - Better Positioning */}
+      <section className="relative -mt-40 pb-32 px-4">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 1.1 }}
+            className="relative z-20"
+          >
+            <EnhancedMetrics
+              metrics={
+                homepageContent?.metrics || [
+                  {
+                    value: "150",
+                    label: "Projects Completed",
+                    description:
+                      "Successfully delivered projects across various industries",
+                    icon: "📊",
+                    color: "vtech-cyan",
+                    suffix: "+",
+                  },
+                  {
+                    value: "80",
+                    label: "Happy Clients",
+                    description:
+                      "Satisfied clients who trust us with their digital transformation",
+                    icon: "😊",
+                    color: "vtech-purple",
+                    suffix: "+",
+                  },
+                  {
+                    value: "15",
+                    label: "Team Members",
+                    description:
+                      "Expert developers, designers, and strategists",
+                    icon: "👥",
+                    color: "vtech-teal",
+                    suffix: "+",
+                  },
+                  {
+                    value: "4",
+                    label: "Years Experience",
+                    description: "Building innovative solutions since 2020",
+                    icon: "📅",
+                    color: "vtech-cyan",
+                    suffix: "+",
+                  },
+                ]
+              }
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ULTRA THIN Professional Pull Quote Section */}
+      <section className="py-32 px-4 relative overflow-hidden">
+        {/* Minimal Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50/50 via-transparent to-cyan-50/30 dark:from-slate-900/30 dark:via-transparent dark:to-slate-800/20" />
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          {/* Ultra Thin Quote Container */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 1.2,
+              ease: [0.25, 0.46, 0.45, 0.94],
+            }}
+            viewport={{ once: true, margin: "-100px" }}
+            className="relative"
+          >
+            {/* Ultra Thin Background */}
+            <div className="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-2xl p-16 md:p-20 lg:p-24 shadow-sm border border-gray-200/30 dark:border-gray-700/30">
+              {/* Ultra Thin Quote Content */}
+              <div className="relative z-10 text-center">
+                {/* Main Quote */}
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 1.0,
+                    delay: 0.3,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                  viewport={{ once: true }}
+                  className="mb-12"
+                >
+                  {/* First Line */}
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    viewport={{ once: true }}
+                    className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 dark:text-white leading-tight mb-6"
+                  >
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {homepageContent?.promotional?.line1 || "We don't just"}
+                    </span>
+                  </motion.h2>
+
+                  {/* Second Line */}
+                  <motion.h3
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.7 }}
+                    viewport={{ once: true }}
+                    className="text-5xl md:text-6xl lg:text-7xl font-medium text-cyan-600 dark:text-cyan-400 leading-tight mb-6"
+                  >
+                    {homepageContent?.promotional?.line2 || "build software"}
+                  </motion.h3>
+
+                  {/* Third Line */}
+                  <motion.h4
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.9 }}
+                    viewport={{ once: true }}
+                    className="text-3xl md:text-4xl lg:text-5xl font-light text-gray-700 dark:text-gray-300 leading-tight mb-6"
+                  >
+                    {homepageContent?.promotional?.line3 ||
+                      "—we build solutions that drive"}
+                  </motion.h4>
+
+                  {/* Fourth Line */}
+                  <motion.h5
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 1.1 }}
+                    viewport={{ once: true }}
+                    className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+                  >
+                    <span className="bg-gradient-to-r from-cyan-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+                      {homepageContent?.promotional?.line4 ||
+                        "measurable business results"}
+                    </span>
+                  </motion.h5>
+
+                  {/* Ultra Thin Separator */}
+                  <motion.div
+                    initial={{ scaleX: 0, opacity: 0 }}
+                    whileInView={{ scaleX: 1, opacity: 1 }}
+                    transition={{ duration: 1.0, delay: 1.3 }}
+                    viewport={{ once: true }}
+                    className="mt-12 h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent mx-auto"
+                    style={{ maxWidth: "120px" }}
+                  />
+                </motion.div>
+
+                {/* Ultra Thin Author Section */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 1.5 }}
+                  viewport={{ once: true }}
+                  className="flex items-center justify-center gap-6"
+                >
+                  {/* Ultra Thin Avatar */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6, delay: 1.7 }}
+                    viewport={{ once: true }}
+                    whileHover={{ scale: 1.05 }}
+                    className="relative"
+                  >
+                    {homepageContent?.promotional?.logoImage ? (
+                      <img
+                        src={homepageContent.promotional.logoImage}
+                        alt={
+                          homepageContent?.promotional?.companyName ||
+                          "VTech Team"
+                        }
+                        className="w-16 h-16 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700 shadow-sm"
+                        onError={(e) => {
+                          // Fallback to default VT icon if image fails to load
+                          e.currentTarget.style.display = "none";
+                          const vtIcon =
+                            e.currentTarget.parentElement?.querySelector(
+                              ".vt-fallback"
+                            );
+                          if (vtIcon) {
+                            vtIcon.classList.remove("hidden");
+                          }
+                        }}
+                      />
+                    ) : null}
+                    <div
+                      className={`w-16 h-16 rounded-xl bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-white font-bold text-xl shadow-sm ${homepageContent?.promotional?.logoImage ? "hidden vt-fallback" : ""}`}
+                    >
+                      VT
+                    </div>
+                  </motion.div>
+
+                  {/* Ultra Thin Author Info */}
+                  <div className="text-left">
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 1.9 }}
+                      viewport={{ once: true }}
+                      className="text-xl font-semibold text-gray-900 dark:text-white mb-1"
+                    >
+                      {homepageContent?.promotional?.companyName ||
+                        "VTech Team"}
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.6, delay: 2.1 }}
+                      viewport={{ once: true }}
+                      className="text-sm text-cyan-600 dark:text-cyan-400 font-medium"
+                    >
+                      {homepageContent?.promotional?.tagline ||
+                        "Delivering excellence since 2020"}
+                    </motion.div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Ultra Thin Corner Accents */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 2.3 }}
+                viewport={{ once: true }}
+                className="absolute top-4 left-4 w-6 h-6 border-l border-t border-cyan-500/40 rounded-tl-lg"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 2.5 }}
+                viewport={{ once: true }}
+                className="absolute top-4 right-4 w-6 h-6 border-r border-t border-purple-500/40 rounded-tr-lg"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 2.7 }}
+                viewport={{ once: true }}
+                className="absolute bottom-4 left-4 w-6 h-6 border-l border-b border-purple-500/40 rounded-bl-lg"
+              />
+              <motion.div
+                initial={{ opacity: 0, scale: 0 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 2.9 }}
+                viewport={{ once: true }}
+                className="absolute bottom-4 right-4 w-6 h-6 border-r border-b border-cyan-500/40 rounded-br-lg"
+              />
+            </div>
+
+            {/* Ultra Thin Decorative Elements */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 3.1 }}
+              viewport={{ once: true }}
+              className="flex justify-center space-x-4 mt-8"
+            >
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 3.3,
+                }}
+                viewport={{ once: true }}
+                className="w-2 h-2 rounded-full bg-cyan-500"
+              />
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 3.5,
+                }}
+                viewport={{ once: true }}
+                className="w-2 h-2 rounded-full bg-purple-500"
+              />
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 3.7,
+                }}
+                viewport={{ once: true }}
+                className="w-2 h-2 rounded-full bg-cyan-500"
+              />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Enhanced Services Section */}
+      <section className="py-20 px-4 relative overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-br from-vtech-slate-900/10 via-transparent to-vtech-cyan-500/5" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-vtech-purple-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-vtech-cyan-500/5 rounded-full blur-3xl" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Enhanced Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-20"
+          >
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 dark:text-white mb-6"
+            >
+              {isMounted && homepageContent?.services?.title ? (
                 <span
                   dangerouslySetInnerHTML={{
-                    __html: homepageContent.hero.title.replace(
-                      /Software Solutions/g,
-                      '<span class="bg-gradient-to-r from-slate-800 via-cyan-500 to-orange-500 bg-clip-text text-transparent">Software Solutions</span>'
+                    __html: homepageContent.services.title.replace(
+                      /Build/g,
+                      '<span class="font-bold text-gradient-vtech-primary">Build</span>'
                     ),
                   }}
                 />
               ) : (
                 <>
-                  Build{" "}
-                  <span className="bg-gradient-to-r from-slate-800 via-cyan-500 to-orange-500 bg-clip-text text-transparent">
-                    Software Solutions
-                  </span>{" "}
-                  That Scale
+                  What We{" "}
+                  <span className="font-bold text-gradient-vtech-primary">
+                    Build
+                  </span>
                 </>
               )}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
-              {isMounted && homepageContent?.hero?.description
-                ? homepageContent.hero.description
-                : "VTech is a technology company building reliable software products and services. We craft modern web and mobile applications, integrate cloud-native solutions, and deliver clean user experiences that help businesses move faster."}
-            </p>
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              viewport={{ once: true }}
+              className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
+            >
+              {isMounted && homepageContent?.services?.description
+                ? homepageContent.services.description
+                : "From concept to deployment, we handle every aspect of your software development needs with cutting-edge technologies and proven methodologies."}
+            </motion.p>
           </motion.div>
 
-          {/* Primary CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-          >
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/contact"
-                className="px-8 py-4 bg-gradient-to-r from-slate-800 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2"
-              >
-                {isMounted && homepageContent?.hero?.primaryButton
-                  ? homepageContent.hero.primaryButton
-                  : "Start Your Project"}
-                <ArrowRightIcon />
-              </Link>
-            </motion.div>
-
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/portfolio"
-                className="px-8 py-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 flex items-center gap-2"
-              >
-                {isMounted && homepageContent?.hero?.secondaryButton
-                  ? homepageContent.hero.secondaryButton
-                  : "View Our Work"}
-                <ArrowRightIcon />
-              </Link>
-            </motion.div>
-          </motion.div>
-
-          {/* Social Proof - Company Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
-          >
+          {/* Enhanced Services Grid */}
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
             {[
-              { label: "Projects Completed", value: "150+", icon: "📊" },
-              { label: "Happy Clients", value: "80+", icon: "😊" },
-              { label: "Team Members", value: "15+", icon: "👥" },
-              { label: "Years Experience", value: "4+", icon: "🗓️" },
-            ].map((stat, index) => (
+              {
+                title: "Web Applications",
+                description:
+                  "Full-stack web applications built for scale, performance, and exceptional user experiences",
+                icon: "🌐",
+                technologies: ["React", "Node.js", "TypeScript"],
+                features: [
+                  "Progressive Web Apps",
+                  "Real-time Features",
+                  "SEO Optimized",
+                ],
+                color: "from-vtech-cyan-500 to-vtech-purple-500",
+              },
+              {
+                title: "Mobile Solutions",
+                description:
+                  "Native and cross-platform mobile applications that deliver native performance",
+                icon: "📱",
+                technologies: ["React Native", "Flutter", "Swift"],
+                features: [
+                  "Cross-platform",
+                  "Native Performance",
+                  "App Store Ready",
+                ],
+                color: "from-vtech-purple-500 to-vtech-cyan-500",
+              },
+              {
+                title: "Cloud Infrastructure",
+                description:
+                  "Scalable cloud architecture and DevOps automation for enterprise-grade solutions",
+                icon: "☁️",
+                technologies: ["AWS", "Docker", "Kubernetes"],
+                features: [
+                  "Auto-scaling",
+                  "High Availability",
+                  "Cost Optimized",
+                ],
+                color: "from-vtech-cyan-500 to-vtech-purple-500",
+              },
+            ].map((service, index) => (
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 + index * 0.1 }}
-                className="text-center"
+                key={service.title}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="group relative"
               >
-                <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                  {stat.label}
+                {/* Service Card */}
+                <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-800/50 hover:shadow-2xl transition-all duration-500 group-hover:scale-105 h-full flex flex-col relative overflow-hidden">
+                  {/* Background Glow Effect */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${service.color} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
+                  />
+
+                  {/* Enhanced Icon */}
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                    className={`w-20 h-20 rounded-3xl flex items-center justify-center text-white text-3xl mx-auto mb-6 bg-gradient-to-br ${service.color} shadow-lg relative z-10`}
+                  >
+                    {service.icon}
+                    {/* Icon Glow */}
+                    <div
+                      className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${service.color} blur-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300`}
+                    />
+                  </motion.div>
+
+                  {/* Service Title */}
+                  <motion.h3
+                    whileHover={{ color: "hsl(190, 60%, 50%)" }}
+                    transition={{ duration: 0.3 }}
+                    className="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center relative z-10"
+                  >
+                    {service.title}
+                  </motion.h3>
+
+                  {/* Service Description */}
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-6 text-center flex-1 relative z-10">
+                    {service.description}
+                  </p>
+
+                  {/* Enhanced Technology Tags */}
+                  <div className="flex flex-wrap gap-2 justify-center mb-6 relative z-10">
+                    {service.technologies.map((tech, techIndex) => (
+                      <motion.span
+                        key={techIndex}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.4, delay: techIndex * 0.1 }}
+                        viewport={{ once: true }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        className="text-xs px-4 py-2 bg-gradient-to-r from-vtech-cyan-50 to-vtech-purple-50 dark:from-vtech-cyan-900/30 dark:to-vtech-purple-900/30 text-vtech-cyan-700 dark:text-vtech-cyan-300 rounded-full font-medium border border-vtech-cyan-200/50 dark:border-vtech-cyan-700/50 shadow-sm hover:shadow-md transition-all duration-300"
+                      >
+                        {tech}
+                      </motion.span>
+                    ))}
+                  </div>
+
+                  {/* Features List */}
+                  <div className="space-y-2 relative z-10">
+                    {service.features.map((feature, featureIndex) => (
+                      <motion.div
+                        key={featureIndex}
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: featureIndex * 0.1,
+                        }}
+                        viewport={{ once: true }}
+                        className="flex items-center text-sm text-gray-600 dark:text-gray-400"
+                      >
+                        <div className="w-1.5 h-1.5 rounded-full bg-vtech-cyan-500 mr-3 flex-shrink-0" />
+                        {feature}
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Corner Accents */}
+                  <div className="absolute top-0 left-0 w-8 h-8 border-l-2 border-t-2 border-vtech-cyan-500/30 rounded-tl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-0 right-0 w-8 h-8 border-r-2 border-t-2 border-vtech-purple-500/30 rounded-tr-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-l-2 border-b-2 border-vtech-cyan-500/30 rounded-bl-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-r-2 border-b-2 border-vtech-purple-500/30 rounded-br-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </motion.div>
             ))}
+          </div>
+
+          {/* Enhanced CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mt-20"
+          >
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              viewport={{ once: true }}
+              className="text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto"
+            >
+              {isMounted && homepageContent?.services?.ctaText
+                ? homepageContent.services.ctaText
+                : "Ready to bring your vision to life? Let's discuss your project and create something extraordinary together."}
+            </motion.p>
+
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-block"
+            >
+              <Link
+                href="/contact"
+                className="inline-flex items-center px-6 py-3 text-white rounded-xl font-semibold text-base hover:shadow-2xl transition-all duration-300 bg-gradient-to-r from-vtech-cyan-500 to-vtech-purple-500 hover:from-vtech-cyan-600 hover:to-vtech-purple-600 relative overflow-hidden group"
+              >
+                <span className="relative z-10">Discuss Your Project</span>
+                <motion.div
+                  className="ml-3 relative z-10"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <ArrowRightIcon />
+                </motion.div>
+                {/* Button Glow Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-vtech-cyan-500/20 to-vtech-purple-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </Link>
+            </motion.div>
           </motion.div>
         </div>
       </section>
 
-      {/* Services Section */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+      {/* Development Process Section */}
+      <section className="py-20 px-4 bg-gray-50 dark:bg-gray-900/50">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -346,116 +1055,107 @@ export default function Portfolio() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 dark:text-white mb-4">
-              {isMounted && homepageContent?.services?.title ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: homepageContent.services.title.replace(
-                      /Build/g,
-                      '<span class="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">Build</span>'
-                    ),
-                  }}
-                />
-              ) : (
-                <>
-                  What We{" "}
-                  <span className="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">
-                    Build
-                  </span>
-                </>
-              )}
+              Our{" "}
+              <span className="font-bold text-gradient-vtech-primary">
+                Development Process
+              </span>
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              {isMounted && homepageContent?.services?.description
-                ? homepageContent.services.description
-                : "From concept to deployment, we handle every aspect of your software development needs."}
+              A proven methodology that ensures quality, transparency, and
+              successful project delivery
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Web Applications",
-                description:
-                  "Full-stack web apps built for scale and performance",
-                icon: "🌐",
-                technologies: ["React", "Node.js", "TypeScript"],
-              },
-              {
-                title: "Mobile Solutions",
-                description: "Native and cross-platform mobile applications",
-                icon: "📱",
-                technologies: ["React Native", "Flutter", "Swift"],
-              },
-              {
-                title: "Cloud Infrastructure",
-                description:
-                  "Scalable cloud architecture and DevOps automation",
-                icon: "☁️",
-                technologies: ["AWS", "Docker", "Kubernetes"],
-              },
-            ].map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center group"
-              >
-                <div className="mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-r from-slate-800 to-cyan-500 flex items-center justify-center text-white text-2xl mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                    {service.icon}
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                    {service.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                    {service.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {service.technologies.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <ProcessDiagram
+            steps={
+              homepageContent?.processSteps || [
+                {
+                  id: "discovery",
+                  title: "Discovery & Planning",
+                  description:
+                    "We analyze your requirements and create a comprehensive project roadmap",
+                  icon: "🔍",
+                  deliverables: [
+                    "Requirements document",
+                    "Technical specification",
+                    "Project timeline",
+                    "Resource allocation",
+                  ],
+                },
+                {
+                  id: "design",
+                  title: "Design & Prototyping",
+                  description:
+                    "Create user-centered designs and interactive prototypes",
+                  icon: "🎨",
+                  deliverables: [
+                    "UI/UX designs",
+                    "Interactive prototypes",
+                    "Design system",
+                    "User flows",
+                  ],
+                },
+                {
+                  id: "development",
+                  title: "Development & Testing",
+                  description:
+                    "Build robust solutions with continuous testing and quality assurance",
+                  icon: "💻",
+                  deliverables: [
+                    "Working application",
+                    "Unit tests",
+                    "Integration tests",
+                    "Performance optimization",
+                  ],
+                },
+                {
+                  id: "deployment",
+                  title: "Deployment & Support",
+                  description:
+                    "Launch your solution and provide ongoing maintenance and support",
+                  icon: "🚀",
+                  deliverables: [
+                    "Production deployment",
+                    "User training",
+                    "Documentation",
+                    "Support plan",
+                  ],
+                },
+              ]
+            }
+          />
+        </div>
+      </section>
 
-          {/* Simple CTA */}
+      {/* Interactive Features Section */}
+      <section className="py-20 px-4">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mt-12"
+            className="text-center mb-16"
           >
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {isMounted && homepageContent?.services?.ctaText
-                ? homepageContent.services.ctaText
-                : "Need something custom? We build exactly what you need."}
+            <h2 className="text-4xl md:text-5xl font-light text-gray-900 dark:text-white mb-4">
+              Advanced{" "}
+              <span className="font-bold text-gradient-vtech-primary">
+                Features
+              </span>
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Explore our cutting-edge capabilities that set us apart from the
+              competition
             </p>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href="/contact"
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transition-all duration-300"
-              >
-                Discuss Your Project
-                <ArrowRightIcon />
-              </Link>
-            </motion.div>
           </motion.div>
+
+          <InteractiveElements />
         </div>
       </section>
 
       {/* Client Testimonials */}
       <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -465,7 +1165,7 @@ export default function Portfolio() {
           >
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 dark:text-white mb-4">
               Trusted by{" "}
-              <span className="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">
+              <span className="font-bold text-gradient-vtech-primary">
                 Industry Leaders
               </span>
             </h2>
@@ -474,51 +1174,9 @@ export default function Portfolio() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {companyInfo.testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-sm border border-gray-200/50 dark:border-gray-800/50 h-full">
-                  <div className="flex items-center mb-6">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className="w-4 h-4 text-yellow-400 fill-current"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
-                    "{testimonial.content}"
-                  </p>
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-gradient-to-r from-slate-700 to-cyan-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-4">
-                      {testimonial.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </div>
-                    <div>
-                      <div className="font-semibold text-gray-900 dark:text-white text-sm">
-                        {testimonial.name}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {testimonial.title}, {testimonial.company}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          <EnhancedTestimonials
+            testimonials={homepageContent?.testimonials || []}
+          />
         </div>
       </section>
 
@@ -534,7 +1192,7 @@ export default function Portfolio() {
           >
             <h2 className="text-4xl md:text-5xl font-light text-gray-900 dark:text-white mb-4">
               Enterprise{" "}
-              <span className="font-bold bg-gradient-to-r from-slate-800 to-cyan-500 bg-clip-text text-transparent">
+              <span className="font-bold text-gradient-vtech-primary">
                 Capabilities
               </span>
             </h2>
@@ -544,56 +1202,7 @@ export default function Portfolio() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Cloud Architecture",
-                capability: "Multi-cloud deployment strategies",
-                metrics: "99.9% uptime SLA",
-                icon: "☁️",
-                description:
-                  "Design and implement resilient, auto-scaling cloud infrastructure across AWS, Azure, and GCP platforms.",
-              },
-              {
-                title: "DevOps & Security",
-                capability: "CI/CD pipeline automation",
-                metrics: "50% faster deployments",
-                icon: "🔒",
-                description:
-                  "Implement secure development practices with automated testing, deployment, and infrastructure-as-code.",
-              },
-              {
-                title: "Performance Engineering",
-                capability: "High-traffic system optimization",
-                metrics: "10M+ requests/hour",
-                icon: "⚡",
-                description:
-                  "Build systems that handle enterprise-scale traffic with sub-second response times and fault tolerance.",
-              },
-              {
-                title: "Data Engineering",
-                capability: "Real-time analytics pipelines",
-                metrics: "Petabyte-scale processing",
-                icon: "📊",
-                description:
-                  "Design data architectures for business intelligence, machine learning, and real-time decision making.",
-              },
-              {
-                title: "API Development",
-                capability: "Microservices architecture",
-                metrics: "99.95% availability",
-                icon: "🔗",
-                description:
-                  "Build scalable, versioned APIs with comprehensive documentation and robust authentication systems.",
-              },
-              {
-                title: "Quality Assurance",
-                capability: "Automated testing frameworks",
-                metrics: "95% code coverage",
-                icon: "✅",
-                description:
-                  "Implement comprehensive testing strategies including unit, integration, and end-to-end automation.",
-              },
-            ].map((capability, index) => (
+            {(homepageContent?.capabilities || []).map((capability, index) => (
               <motion.div
                 key={capability.title}
                 initial={{ opacity: 0, y: 30 }}
@@ -603,7 +1212,10 @@ export default function Portfolio() {
                 className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-gray-200/50 dark:border-gray-800/50 hover:shadow-lg transition-all duration-300"
               >
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-slate-700 to-cyan-500 flex items-center justify-center text-white text-xl">
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl"
+                    style={createStyles.gradient(brandGradients.secondary)}
+                  >
                     {capability.icon}
                   </div>
                   <div className="flex-1">
@@ -749,7 +1361,10 @@ export default function Portfolio() {
           viewport={{ once: true }}
           className="max-w-4xl mx-auto text-center"
         >
-          <div className="bg-gradient-to-r from-slate-800 via-cyan-600 to-orange-500 rounded-3xl p-12 text-white relative overflow-hidden">
+          <div
+            className="rounded-3xl p-12 text-white relative overflow-hidden"
+            style={createStyles.gradient(brandGradients.primary)}
+          >
             <div className="relative z-10">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
                 {isMounted && homepageContent?.cta?.title

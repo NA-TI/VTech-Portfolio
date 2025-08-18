@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // Global cache store
 class DataCache {
@@ -8,21 +8,24 @@ class DataCache {
 
   constructor() {
     // Set up cross-tab communication only in browser environment
-    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+    if (
+      typeof window !== "undefined" &&
+      typeof BroadcastChannel !== "undefined"
+    ) {
       try {
-        this.broadcast = new BroadcastChannel('portfolio-data-sync');
+        this.broadcast = new BroadcastChannel("portfolio-data-sync");
         this.broadcast.onmessage = (event) => {
           const { type, key, data } = event.data;
-          if (type === 'cache-update') {
+          if (type === "cache-update") {
             this.cache.set(key, data);
             this.notifySubscribers(key, data);
-          } else if (type === 'cache-invalidate') {
+          } else if (type === "cache-invalidate") {
             this.cache.delete(key);
             this.notifySubscribers(key, null);
           }
         };
       } catch (error) {
-        console.warn('BroadcastChannel not available:', error);
+        console.warn("BroadcastChannel not available:", error);
         this.broadcast = undefined;
       }
     }
@@ -35,12 +38,12 @@ class DataCache {
   set(key: string, data: any, broadcast = true) {
     this.cache.set(key, data);
     this.notifySubscribers(key, data);
-    
+
     if (broadcast && this.broadcast) {
       this.broadcast.postMessage({
-        type: 'cache-update',
+        type: "cache-update",
         key,
-        data
+        data,
       });
     }
   }
@@ -48,11 +51,11 @@ class DataCache {
   invalidate(key: string, broadcast = true) {
     this.cache.delete(key);
     this.notifySubscribers(key, null);
-    
+
     if (broadcast && this.broadcast) {
       this.broadcast.postMessage({
-        type: 'cache-invalidate',
-        key
+        type: "cache-invalidate",
+        key,
       });
     }
   }
@@ -78,15 +81,23 @@ class DataCache {
   private notifySubscribers(key: string, data: any) {
     const keySubscribers = this.subscribers.get(key);
     if (keySubscribers) {
-      keySubscribers.forEach(callback => callback(data));
+      keySubscribers.forEach((callback) => callback(data));
     }
   }
 }
 
-// Global cache instance - only create in browser environment
-let globalCache: DataCache;
+// Interface for SSR cache
+interface SSRCache {
+  get: (key: string) => any;
+  set: (key: string, data: any, broadcast?: boolean) => void;
+  invalidate: (key: string, broadcast?: boolean) => void;
+  subscribe: (key: string, callback: Function) => () => void;
+}
 
-if (typeof window !== 'undefined') {
+// Global cache instance - only create in browser environment
+let globalCache: DataCache | SSRCache;
+
+if (typeof window !== "undefined") {
   globalCache = new DataCache();
 } else {
   // Create a minimal cache for SSR
@@ -94,14 +105,14 @@ if (typeof window !== 'undefined') {
     get: () => null,
     set: () => {},
     invalidate: () => {},
-    subscribe: () => () => {}
-  } as any;
+    subscribe: () => () => {},
+  };
 }
 
 // Profile data interfaces
 export interface StyledWord {
   word: string;
-  style: 'bold' | 'italic' | 'bold-color' | 'italic-color';
+  style: "bold" | "italic" | "bold-color" | "italic-color";
   color?: string;
 }
 
@@ -131,12 +142,12 @@ export interface ProfileResponse {
 // Skills data interfaces
 export interface SkillData {
   id: string;
-  title: string;
-  description: string;
-  icon_name?: string;
-  color_gradient?: string;
+  name: string;
+  category: string;
+  icon: string;
+  color: string;
   proficiency: number;
-  styled_words?: StyledWord[];
+  order_index: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -153,7 +164,7 @@ export interface ProjectData {
   title: string;
   description: string;
   short_description?: string;
-  category: 'web' | 'mobile' | 'ai' | 'cloud' | 'enterprise';
+  category: "web" | "mobile" | "ai" | "cloud" | "enterprise";
   image_url: string;
   live_url?: string;
   github_url?: string;
@@ -161,7 +172,7 @@ export interface ProjectData {
   technologies?: string[];
   key_features?: string[];
   featured?: boolean;
-  status?: 'planning' | 'development' | 'completed' | 'archived';
+  status?: "planning" | "development" | "completed" | "archived";
   styled_words?: StyledWord[];
   created_at?: string;
   updated_at?: string;
@@ -180,98 +191,103 @@ export interface UseDataOptions {
   cacheTime?: number;
 }
 
-export function useData<T>(
-  endpoint: string,
-  options: UseDataOptions = {}
-) {
+export function useData<T>(endpoint: string, options: UseDataOptions = {}) {
   const {
     revalidateOnFocus = true,
     revalidateInterval = 0,
     optimisticUpdate = true,
-    cacheTime = 5 * 60 * 1000 // 5 minutes
+    cacheTime = 5 * 60 * 1000, // 5 minutes
   } = options;
 
   const [data, setData] = useState<T | null>(() => {
     // Only get from cache in browser environment
-    return typeof window !== 'undefined' ? globalCache.get(endpoint) : null;
+    return typeof window !== "undefined" ? globalCache.get(endpoint) : null;
   });
   const [isLoading, setIsLoading] = useState(() => {
     // Always start with loading true in SSR to avoid hydration mismatch
-    return typeof window === 'undefined' ? true : !data;
+    return typeof window === "undefined" ? true : !data;
   });
   const [error, setError] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
-  
+
   const lastFetchTime = useRef<number>(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch function
-  const fetchData = useCallback(async (showLoading = true) => {
-    if (showLoading && !data) setIsLoading(true);
-    setIsValidating(true);
-    setError(null);
+  const fetchData = useCallback(
+    async (showLoading = true) => {
+      if (showLoading && !data) setIsLoading(true);
+      setIsValidating(true);
+      setError(null);
 
-    try {
-      const response = await fetch(endpoint, {
-        headers: {
-          'Cache-Control': 'no-cache',
-        },
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      try {
+        const response = await fetch(endpoint, {
+          headers: {
+            "Cache-Control": "no-cache",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        lastFetchTime.current = Date.now();
+
+        // Update cache and state
+        globalCache.set(endpoint, result, true);
+        setData(result);
+
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An error occurred";
+        setError(errorMessage);
+        console.error("Fetch error:", err);
+        throw err;
+      } finally {
+        setIsLoading(false);
+        setIsValidating(false);
       }
-      
-      const result = await response.json();
-      lastFetchTime.current = Date.now();
-      
-      // Update cache and state
-      globalCache.set(endpoint, result, true);
-      setData(result);
-      
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
-      console.error('Fetch error:', err);
-      throw err;
-    } finally {
-      setIsLoading(false);
-      setIsValidating(false);
-    }
-  }, [endpoint, data]);
+    },
+    [endpoint, data]
+  );
 
   // Mutate function for optimistic updates
-  const mutate = useCallback(async (
-    newData?: T | ((current: T | null) => T),
-    shouldRevalidate = true
-  ) => {
-    // Optimistic update
-    if (newData !== undefined) {
-      const updatedData = typeof newData === 'function' 
-        ? (newData as Function)(data) 
-        : newData;
-      
-      setData(updatedData);
-      globalCache.set(endpoint, updatedData, true);
-    }
+  const mutate = useCallback(
+    async (
+      newData?: T | ((current: T | null) => T),
+      shouldRevalidate = true
+    ) => {
+      // Optimistic update
+      if (newData !== undefined) {
+        const updatedData =
+          typeof newData === "function"
+            ? (newData as (current: T | null) => T)(data)
+            : newData;
 
-    // Revalidate if needed
-    if (shouldRevalidate) {
-      try {
-        await fetchData(false);
-      } catch (err) {
-        // Revert on error if we had optimistic update
-        if (newData !== undefined) {
-          const cachedData = globalCache.get(endpoint);
-          if (cachedData) {
-            setData(cachedData);
-          }
-        }
-        throw err;
+        setData(updatedData);
+        globalCache.set(endpoint, updatedData, true);
       }
-    }
-  }, [data, endpoint, fetchData]);
+
+      // Revalidate if needed
+      if (shouldRevalidate) {
+        try {
+          await fetchData(false);
+        } catch (err) {
+          // Revert on error if we had optimistic update
+          if (newData !== undefined) {
+            const cachedData = globalCache.get(endpoint);
+            if (cachedData) {
+              setData(cachedData);
+            }
+          }
+          throw err;
+        }
+      }
+    },
+    [data, endpoint, fetchData]
+  );
 
   // Invalidate cache
   const invalidate = useCallback(() => {
@@ -296,7 +312,7 @@ export function useData<T>(
   useEffect(() => {
     const cachedData = globalCache.get(endpoint);
     const now = Date.now();
-    const isStale = !cachedData || (now - lastFetchTime.current > cacheTime);
+    const isStale = !cachedData || now - lastFetchTime.current > cacheTime;
 
     if (!cachedData || isStale) {
       fetchData();
@@ -308,17 +324,18 @@ export function useData<T>(
 
   // Revalidate on focus
   useEffect(() => {
-    if (!revalidateOnFocus || typeof window === 'undefined') return;
+    if (!revalidateOnFocus || typeof window === "undefined") return;
 
     const handleFocus = () => {
       const now = Date.now();
-      if (now - lastFetchTime.current > 30000) { // 30 seconds
+      if (now - lastFetchTime.current > 30000) {
+        // 30 seconds
         fetchData(false);
       }
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [revalidateOnFocus, fetchData]);
 
   // Interval revalidation
@@ -343,17 +360,17 @@ export function useData<T>(
     isValidating,
     mutate,
     invalidate,
-    refetch: () => fetchData(false)
+    refetch: () => fetchData(false),
   };
 }
 
 // Enhanced hook functions with real-time features
 export function useProjects(category?: string, featured?: boolean) {
   const params = new URLSearchParams();
-  if (category && category !== 'all') params.append('category', category);
-  if (featured) params.append('featured', 'true');
-  
-  const endpoint = `/api/projects${params.toString() ? `?${params.toString()}` : ''}`;
+  if (category && category !== "all") params.append("category", category);
+  if (featured) params.append("featured", "true");
+
+  const endpoint = `/api/projects${params.toString() ? `?${params.toString()}` : ""}`;
   return useData<ProjectsResponse>(endpoint, {
     revalidateOnFocus: true,
     cacheTime: 3 * 60 * 1000, // 3 minutes for projects
@@ -361,7 +378,7 @@ export function useProjects(category?: string, featured?: boolean) {
 }
 
 export function useSkills() {
-  return useData<SkillsResponse>('/api/skills', {
+  return useData<SkillsResponse>("/api/skills", {
     revalidateOnFocus: true,
     revalidateInterval: 30000, // Revalidate every 30 seconds
     cacheTime: 2 * 60 * 1000, // 2 minutes for skills
@@ -369,7 +386,7 @@ export function useSkills() {
 }
 
 export function useProfile() {
-  return useData<ProfileResponse>('/api/profile', {
+  return useData<ProfileResponse>("/api/profile", {
     revalidateOnFocus: true,
     cacheTime: 10 * 60 * 1000, // 10 minutes for profile
   });
@@ -378,57 +395,95 @@ export function useProfile() {
 // Utility functions for cache management
 export const dataCache = {
   invalidateAll: () => {
-    if (typeof window !== 'undefined') {
-      ['/api/skills', '/api/projects', '/api/profile'].forEach(key => {
-        globalCache.invalidate(key, true);
-      });
+    if (typeof window !== "undefined") {
+      ["/api/skills", "/api/projects", "/api/profile", "/api/settings"].forEach(
+        (key) => {
+          globalCache.invalidate(key, true);
+        }
+      );
     }
   },
-  
+
   invalidateSkills: () => {
-    globalCache.invalidate('/api/skills', true);
+    globalCache.invalidate("/api/skills", true);
   },
-  
+
   invalidateProjects: () => {
-    globalCache.invalidate('/api/projects', true);
+    globalCache.invalidate("/api/projects", true);
   },
-  
+
   invalidateProfile: () => {
-    globalCache.invalidate('/api/profile', true);
+    globalCache.invalidate("/api/profile", true);
   },
 
   optimisticUpdateSkill: (skillId: string, updates: Partial<SkillData>) => {
-    const currentData = globalCache.get('/api/skills') as SkillsResponse;
+    const currentData = globalCache.get("/api/skills") as SkillsResponse;
     if (currentData?.data) {
       const updatedData = {
         ...currentData,
-        data: currentData.data.map(skill => 
+        data: currentData.data.map((skill) =>
           skill.id === skillId ? { ...skill, ...updates } : skill
-        )
+        ),
       };
-      globalCache.set('/api/skills', updatedData, true);
+      globalCache.set("/api/skills", updatedData, true);
     }
   },
 
   optimisticAddSkill: (newSkill: SkillData) => {
-    const currentData = globalCache.get('/api/skills') as SkillsResponse;
+    const currentData = globalCache.get("/api/skills") as SkillsResponse;
     if (currentData?.data) {
       const updatedData = {
         ...currentData,
-        data: [newSkill, ...currentData.data]
+        data: [newSkill, ...currentData.data],
       };
-      globalCache.set('/api/skills', updatedData, true);
+      globalCache.set("/api/skills", updatedData, true);
     }
   },
 
   optimisticRemoveSkill: (skillId: string) => {
-    const currentData = globalCache.get('/api/skills') as SkillsResponse;
+    const currentData = globalCache.get("/api/skills") as SkillsResponse;
     if (currentData?.data) {
       const updatedData = {
         ...currentData,
-        data: currentData.data.filter(skill => skill.id !== skillId)
+        data: currentData.data.filter((skill) => skill.id !== skillId),
       };
-      globalCache.set('/api/skills', updatedData, true);
+      globalCache.set("/api/skills", updatedData, true);
     }
-  }
-}; 
+  },
+
+  invalidateSettings: () => {
+    globalCache.invalidate("/api/settings", true);
+  },
+};
+
+// ----- Settings -----
+export interface SiteSettingsResponse {
+  success: boolean;
+  data: {
+    siteName: string;
+    siteDescription: string;
+    logo: string;
+    favicon: string;
+    primaryColor: string;
+    secondaryColor: string;
+    metaTitle: string;
+    metaDescription: string;
+    metaKeywords: string;
+    ogImage: string;
+    contactEmail: string;
+    contactPhone: string;
+    contactAddress: string;
+    socialLinks: Record<string, string>;
+    adminEmail: string;
+    enableNotifications: boolean;
+    autoBackup: boolean;
+  } | null;
+}
+
+export function useSettings() {
+  return useData<SiteSettingsResponse>("/api/settings", {
+    revalidateOnFocus: true,
+    revalidateInterval: 60000,
+    cacheTime: 2 * 60 * 1000,
+  });
+}

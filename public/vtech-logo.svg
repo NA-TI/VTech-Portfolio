@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="VTech Logo">
+  <defs>
+    <linearGradient id="vtechGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#vtechGrad)"/>
+  <g fill="#fff">
+    <path d="M120 330l70-180h32l-82 204h-28l8-24z"/>
+    <path d="M248 150h32v120c0 26.5 21.5 48 48 48s48-21.5 48-48V150h32v120c0 44.2-35.8 80-80 80s-80-35.8-80-80V150z"/>
+  </g>
+</svg>
+

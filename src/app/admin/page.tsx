@@ -1,64 +1,145 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
-import { toast } from 'react-hot-toast';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { toast } from "react-hot-toast";
+import { useHSBColors } from "@/hooks/useHSBColors";
 
 // Enhanced Icons
 const TrendingUpIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="22,7 13.5,15.5 8.5,10.5 2,17"/>
-    <polyline points="16,7 22,7 22,13"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="22,7 13.5,15.5 8.5,10.5 2,17" />
+    <polyline points="16,7 22,7 22,13" />
   </svg>
 );
 
 const ProjectsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-    <line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+    <line x1="8" y1="21" x2="16" y2="21" />
+    <line x1="12" y1="17" x2="12" y2="21" />
   </svg>
 );
 
 const SkillsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
   </svg>
 );
 
 const MessagesIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
   </svg>
 );
 
 const ViewsIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-    <circle cx="12" cy="12" r="3"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
   </svg>
 );
 
 const ArrowRightIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M5 12h14"/>
-    <path d="m12 5 7 7-7 7"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 12h14" />
+    <path d="m12 5 7 7-7 7" />
   </svg>
 );
 
 const CalendarIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-    <line x1="16" y1="2" x2="16" y2="6"/>
-    <line x1="8" y1="2" x2="8" y2="6"/>
-    <line x1="3" y1="10" x2="21" y2="10"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
   </svg>
 );
 
 const ClockIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <polyline points="12,6 12,12 16,14"/>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12,6 12,12 16,14" />
   </svg>
 );
 
@@ -74,7 +155,7 @@ interface DashboardStats {
 
 interface ActivityItem {
   id: string;
-  type: 'project' | 'message' | 'skill' | 'view';
+  type: "project" | "message" | "skill" | "view";
   title: string;
   description: string;
   timestamp: string;
@@ -90,10 +171,11 @@ export default function AdminDashboard() {
     views: 0,
     weeklyViews: [120, 190, 300, 500, 200, 300, 450],
     monthlyGrowth: 15.3,
-    recentActivity: []
+    recentActivity: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { brandGradients, createStyles } = useHSBColors();
 
   useEffect(() => {
     fetchDashboardData();
@@ -106,9 +188,9 @@ export default function AdminDashboard() {
 
       // Fetch data from multiple endpoints
       const [projectsRes, skillsRes, messagesRes] = await Promise.all([
-        fetch('/api/projects', { credentials: 'include' }),
-        fetch('/api/skills', { credentials: 'include' }),
-        fetch('/api/contact', { credentials: 'include' })
+        fetch("/api/projects", { credentials: "include" }),
+        fetch("/api/skills", { credentials: "include" }),
+        fetch("/api/contact", { credentials: "include" }),
       ]);
 
       const getJsonSafely = async (res: Response, label: string) => {
@@ -120,49 +202,49 @@ export default function AdminDashboard() {
       };
 
       const [projects, skills, messages] = await Promise.all([
-        getJsonSafely(projectsRes, 'Projects'),
-        getJsonSafely(skillsRes, 'Skills'),
-        getJsonSafely(messagesRes, 'Messages')
+        getJsonSafely(projectsRes, "Projects"),
+        getJsonSafely(skillsRes, "Skills"),
+        getJsonSafely(messagesRes, "Messages"),
       ]);
 
       // Generate recent activity
       const recentActivity: ActivityItem[] = [
         {
-          id: '1',
-          type: 'message',
-          title: 'New Contact Message',
-          description: 'Someone inquired about web development services',
-          timestamp: '2 hours ago',
+          id: "1",
+          type: "message",
+          title: "New Contact Message",
+          description: "Someone inquired about web development services",
+          timestamp: "2 hours ago",
           icon: MessagesIcon,
-          color: 'text-blue-500'
+          color: "text-blue-500",
         },
         {
-          id: '2',
-          type: 'project',
-          title: 'Project Updated',
-          description: 'E-commerce Website project was modified',
-          timestamp: '4 hours ago',
+          id: "2",
+          type: "project",
+          title: "Project Updated",
+          description: "E-commerce Website project was modified",
+          timestamp: "4 hours ago",
           icon: ProjectsIcon,
-          color: 'text-green-500'
+          color: "text-green-500",
         },
         {
-          id: '3',
-          type: 'view',
-          title: 'High Traffic Day',
-          description: 'Portfolio received 150+ views today',
-          timestamp: '6 hours ago',
+          id: "3",
+          type: "view",
+          title: "High Traffic Day",
+          description: "Portfolio received 150+ views today",
+          timestamp: "6 hours ago",
           icon: ViewsIcon,
-          color: 'text-purple-500'
+          color: "text-purple-500",
         },
         {
-          id: '4',
-          type: 'skill',
-          title: 'Skill Added',
-          description: 'Added new React.js skill to portfolio',
-          timestamp: '1 day ago',
+          id: "4",
+          type: "skill",
+          title: "Skill Added",
+          description: "Added new React.js skill to portfolio",
+          timestamp: "1 day ago",
           icon: SkillsIcon,
-          color: 'text-orange-500'
-        }
+          color: "text-orange-500",
+        },
       ];
 
       setStats({
@@ -172,13 +254,12 @@ export default function AdminDashboard() {
         views: 1247, // Fixed value to avoid hydration mismatch
         weeklyViews: [120, 190, 300, 500, 200, 300, 450],
         monthlyGrowth: 15.3,
-        recentActivity
+        recentActivity,
       });
-
     } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      setError('Failed to load dashboard data');
-      toast.error('Failed to load dashboard data');
+      console.error("Error fetching dashboard data:", error);
+      setError("Failed to load dashboard data");
+      toast.error("Failed to load dashboard data");
     } finally {
       setIsLoading(false);
     }
@@ -186,72 +267,66 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      title: 'Total Projects',
+      title: "Total Projects",
       value: stats.projects,
       icon: ProjectsIcon,
-      color: 'from-blue-500 to-cyan-500',
-      href: '/admin/projects',
-      trend: '+12%',
-      description: 'Active portfolio projects'
+      color: "from-blue-500 to-cyan-500",
+      href: "/admin/projects",
+      trend: "+12%",
+      description: "Active portfolio projects",
     },
+    // Removed admin skills link; keep metric but link to content or projects
     {
-      title: 'Skills & Services',
+      title: "Content",
       value: stats.skills,
       icon: SkillsIcon,
-      color: 'from-purple-500 to-pink-500',
-      href: '/admin/skills',
-      trend: '+8%',
-      description: 'Technical competencies'
+      color: "from-purple-500 to-pink-500",
+      href: "/admin/content",
+      trend: "+8%",
+      description: "Manage site sections",
     },
     {
-      title: 'Messages',
+      title: "Messages",
       value: stats.messages,
       icon: MessagesIcon,
-      color: 'from-green-500 to-emerald-500',
-      href: '/admin/messages',
-      trend: 'New',
-      description: 'Contact inquiries'
+      color: "from-green-500 to-emerald-500",
+      href: "/admin/messages",
+      trend: "New",
+      description: "Contact inquiries",
     },
     {
-      title: 'Portfolio Views',
+      title: "Portfolio Views",
       value: stats.views,
       icon: ViewsIcon,
-      color: 'from-orange-500 to-red-500',
-      href: '#',
+      color: "from-orange-500 to-red-500",
+      href: "#",
       trend: `+${stats.monthlyGrowth}%`,
-      description: 'Monthly visitors'
-    }
+      description: "Monthly visitors",
+    },
   ];
 
   const quickActions = [
     {
-      title: 'Add New Project',
-      description: 'Showcase your latest work',
-      href: '/admin/projects/new',
-      color: 'from-blue-500 to-purple-500',
-      icon: ProjectsIcon
+      title: "Add New Project",
+      description: "Showcase your latest work",
+      href: "/admin/projects/new",
+      color: "from-blue-500 to-purple-500",
+      icon: ProjectsIcon,
     },
     {
-      title: 'Update Profile',
-      description: 'Edit personal information',
-      href: '/admin/profile',
-      color: 'from-green-500 to-blue-500',
-      icon: SkillsIcon
+      title: "Manage Content",
+      description: "Edit public site content",
+      href: "/admin/content",
+      color: "from-green-500 to-blue-500",
+      icon: ViewsIcon,
     },
     {
-      title: 'View Messages',
-      description: 'Check recent inquiries',
-      href: '/admin/messages',
-      color: 'from-purple-500 to-pink-500',
-      icon: MessagesIcon
+      title: "View Messages",
+      description: "Check recent inquiries",
+      href: "/admin/messages",
+      color: "from-purple-500 to-pink-500",
+      icon: MessagesIcon,
     },
-    {
-      title: 'Upload Media',
-      description: 'Manage images and files',
-      href: '/admin/media',
-      color: 'from-orange-500 to-red-500',
-      icon: ViewsIcon
-    }
   ];
 
   if (isLoading) {
@@ -266,7 +341,10 @@ export default function AdminDashboard() {
         {/* Stats Cards Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-xl p-6 animate-pulse">
+            <div
+              key={i}
+              className="bg-white dark:bg-gray-800 rounded-xl p-6 animate-pulse"
+            >
               <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-4"></div>
               <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
@@ -281,8 +359,16 @@ export default function AdminDashboard() {
     return (
       <div className="text-center py-12">
         <div className="text-red-500 mb-4">
-          <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          <svg
+            className="w-16 h-16 mx-auto"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
           </svg>
         </div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -331,8 +417,13 @@ export default function AdminDashboard() {
               <Link href={card.href}>
                 <div className="relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 overflow-hidden">
                   {/* Background gradient */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-                  
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300"
+                    style={createStyles.gradient(
+                      `linear-gradient(135deg, ${card.color})`
+                    )}
+                  ></div>
+
                   <div className="relative z-10">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-4">
@@ -344,7 +435,12 @@ export default function AdminDashboard() {
                           {card.value.toLocaleString()}
                         </p>
                       </div>
-                      <div className={`p-3 rounded-lg bg-gradient-to-br ${card.color} shadow-lg`}>
+                      <div
+                        className="p-3 rounded-lg shadow-lg"
+                        style={createStyles.gradient(
+                          `linear-gradient(135deg, ${card.color})`
+                        )}
+                      >
                         <Icon />
                       </div>
                     </div>
@@ -397,7 +493,9 @@ export default function AdminDashboard() {
                 <motion.div
                   key={index}
                   initial={{ height: 0 }}
-                  animate={{ height: `${(value / Math.max(...stats.weeklyViews)) * 100}%` }}
+                  animate={{
+                    height: `${(value / Math.max(...stats.weeklyViews)) * 100}%`,
+                  }}
                   transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }}
                   className="flex-1 bg-gradient-to-t from-blue-500 to-purple-500 rounded-t min-h-[4px] relative group cursor-pointer"
                 >
@@ -408,10 +506,10 @@ export default function AdminDashboard() {
                 </motion.div>
               ))}
             </div>
-            
+
             {/* Days */}
             <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day) => (
                 <span key={day}>{day}</span>
               ))}
             </div>
@@ -426,7 +524,9 @@ export default function AdminDashboard() {
               </p>
             </div>
             <div className="text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Average</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Average
+              </p>
               <p className="text-lg font-semibold text-gray-900 dark:text-white">
                 {Math.round(stats.weeklyViews.reduce((a, b) => a + b, 0) / 7)}
               </p>
@@ -470,7 +570,9 @@ export default function AdminDashboard() {
                   transition={{ delay: 0.8 + index * 0.1 }}
                   className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700 ${activity.color}`}>
+                  <div
+                    className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700 ${activity.color}`}
+                  >
                     <Icon />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -502,7 +604,7 @@ export default function AdminDashboard() {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-6">
           Quick Actions
         </h2>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
@@ -517,10 +619,20 @@ export default function AdminDashboard() {
               >
                 <Link href={action.href}>
                   <div className="relative p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all duration-200 overflow-hidden">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${action.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-                    
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300"
+                      style={createStyles.gradient(
+                        `linear-gradient(135deg, ${action.color})`
+                      )}
+                    ></div>
+
                     <div className="relative z-10 text-center">
-                      <div className={`inline-flex p-3 rounded-lg bg-gradient-to-br ${action.color} text-white mb-3 shadow-lg`}>
+                      <div
+                        className="inline-flex p-3 rounded-lg text-white mb-3 shadow-lg"
+                        style={createStyles.gradient(
+                          `linear-gradient(135deg, ${action.color})`
+                        )}
+                      >
                         <Icon />
                       </div>
                       <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
@@ -540,4 +652,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
