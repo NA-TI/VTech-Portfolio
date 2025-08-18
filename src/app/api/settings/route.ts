@@ -51,6 +51,33 @@ interface SiteSettings {
   autoBackup: boolean;
 }
 
+// Default settings used when database or env is not configured
+const DEFAULT_SETTINGS: SiteSettings = {
+  siteName: "VTech Portfolio",
+  siteDescription: "Professional portfolio and services",
+  logo: "",
+  favicon: "",
+  primaryColor: "#3B82F6",
+  secondaryColor: "#10B981",
+  metaTitle: "VTech Portfolio - Professional Development Services",
+  metaDescription:
+    "Professional web development, mobile apps, and AI solutions",
+  metaKeywords: "web development, mobile apps, AI, portfolio",
+  ogImage: "",
+  contactEmail: "",
+  contactPhone: "",
+  contactAddress: "",
+  socialLinks: {
+    linkedin: "",
+    github: "",
+    twitter: "",
+    instagram: "",
+  },
+  adminEmail: "",
+  enableNotifications: true,
+  autoBackup: true,
+};
+
 // Helpers to map API <-> DB shapes
 function toDb(settings: SiteSettings) {
   return {
@@ -114,7 +141,7 @@ export async function GET(request: NextRequest) {
     // Get settings from database
     const admin = getAdminClient();
     if (!admin) {
-      const payload = defaultSettings;
+      const payload = DEFAULT_SETTINGS;
       return NextResponse.json({ success: true, data: payload });
     }
 
@@ -134,33 +161,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Return default settings if none exist
-    const defaultSettings: SiteSettings = {
-      siteName: "VTech Portfolio",
-      siteDescription: "Professional portfolio and services",
-      logo: "",
-      favicon: "",
-      primaryColor: "#3B82F6",
-      secondaryColor: "#10B981",
-      metaTitle: "VTech Portfolio - Professional Development Services",
-      metaDescription:
-        "Professional web development, mobile apps, and AI solutions",
-      metaKeywords: "web development, mobile apps, AI, portfolio",
-      ogImage: "",
-      contactEmail: "",
-      contactPhone: "",
-      contactAddress: "",
-      socialLinks: {
-        linkedin: "",
-        github: "",
-        twitter: "",
-        instagram: "",
-      },
-      adminEmail: "",
-      enableNotifications: true,
-      autoBackup: true,
-    };
-
-    const payload = data ? fromDb(data) : defaultSettings;
+    const payload = data ? fromDb(data) : DEFAULT_SETTINGS;
     return NextResponse.json({ success: true, data: payload });
   } catch (error) {
     console.error("Settings GET error:", error);
