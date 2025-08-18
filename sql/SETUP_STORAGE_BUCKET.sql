@@ -68,3 +68,4 @@ SELECT
   updated_at
 FROM storage.buckets 
 WHERE name = 'media';
+

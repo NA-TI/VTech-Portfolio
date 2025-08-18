@@ -42,3 +42,4 @@ WHERE NOT EXISTS (
 SELECT content_key, content_data->'navigation' as navigation_data 
 FROM site_content 
 WHERE content_key = 'main_content';
+

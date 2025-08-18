@@ -110,3 +110,4 @@ async function testImageCleanup() {
 
 // Run the test
 testImageCleanup().catch(console.error);
+

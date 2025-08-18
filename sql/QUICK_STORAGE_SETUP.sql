@@ -22,3 +22,4 @@ FOR DELETE USING (bucket_id = 'media' AND auth.role() = 'authenticated');
 
 -- Verify setup
 SELECT 'Storage policies created successfully!' as status;
+
