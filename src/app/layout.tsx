@@ -9,11 +9,11 @@ import ApplySiteSettings from "@/components/ApplySiteSettings";
 
 export const metadata: Metadata = {
   title: {
-    default: "NA-TI ናቲ - Creative Portfolio",
-    template: "%s | NA-TI ናቲ",
+    default: "VTech - Software Solutions Portfolio",
+    template: "%s | VTech",
   },
   description:
-    "Creative designer and developer portfolio",
+    "Professional software development and technology solutions portfolio",
   keywords: [
     "software development",
     "custom software",
@@ -31,17 +31,17 @@ export const metadata: Metadata = {
     "software solutions",
   ],
   authors: [
-    { name: "NA-TI ናቲ", url: "https://na-ti-portfolio.vercel.app" },
+    { name: "VTech", url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000" },
   ],
-  creator: "NA-TI ናቲ",
-  publisher: "NA-TI ናቲ",
+  creator: "VTech",
+  publisher: "VTech",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://na-ti-portfolio.vercel.app"
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
   ),
   alternates: {
     canonical: "/",
@@ -50,10 +50,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url:
-      process.env.NEXT_PUBLIC_SITE_URL || "https://na-ti-portfolio.vercel.app",
-    title: "NA-TI ናቲ - Creative Portfolio",
-    description: "Creative designer and developer portfolio",
-    siteName: "NA-TI ናቲ",
+      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
+    title: "VTech - Software Solutions Portfolio",
+    description: "Professional software development and technology solutions portfolio",
+    siteName: "VTech",
     images: [
       {
         url: "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
@@ -65,8 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NA-TI ናቲ - Creative Portfolio",
-    description: "Creative designer and developer portfolio",
+    title: "VTech - Software Solutions Portfolio",
+    description: "Professional software development and technology solutions portfolio",
     images: [
       "https://opengraph.b-cdn.net/production/images/81ef657c-a048-46f2-81a1-87cbd15caaa4.png?token=jchhvHlDlyduV2Hx8HNe-MmypliVI3z-ckWqyRfPxao&height=792&width=1200&expires=33290012733",
     ],
